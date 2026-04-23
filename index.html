@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NST42 Training Coach</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Sarabun:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0b0b10;--s1:#141420;--s2:#1c1c2a;--s3:#242434;
+  --gold:#c9933a;--gold2:#e8b45a;--red:#922020;
+  --cream:#f0e6cc;--muted:#7070a0;--border:#2a2a40;
+  --green:#2a6a48;--green2:#4aaa78;
+  --blue:#2a5a9a;--blue2:#5a8acc;
+  --purple:#5a3a8a;--purple2:#8a6acc;
+  --orange:#9a5010;--orange2:#ca8030;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--cream);font-family:'Sarabun',sans-serif;min-height:100vh;font-size:14px;}
+
+nav{background:var(--s1);border-bottom:1px solid var(--border);padding:0 16px;display:flex;align-items:center;justify-content:space-between;height:50px;position:sticky;top:0;z-index:300;}
+.brand{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:3px;color:var(--gold);}
+.brand b{color:var(--cream);}
+.tabs{display:flex;gap:2px;}
+.tab{padding:5px 11px;border-radius:4px;font-size:12px;font-weight:600;cursor:pointer;border:none;background:transparent;color:var(--muted);transition:all .2s;font-family:'Sarabun',sans-serif;letter-spacing:.5px;}
+.tab.on{background:var(--gold);color:#000;}
+.tab:hover:not(.on){background:var(--s3);color:var(--cream);}
+
+.page{display:none;padding:16px;max-width:760px;margin:0 auto;}
+.page.on{display:block;animation:fi .25s ease;}
+@keyframes fi{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+
+.sec{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:3px;color:var(--gold);margin-bottom:12px;display:flex;align-items:center;gap:8px;}
+.sec::after{content:'';flex:1;height:1px;background:var(--border);}
+
+.hero{background:var(--s1);border:1px solid var(--border);border-radius:10px;padding:18px;margin-bottom:14px;display:grid;grid-template-columns:auto 1fr;gap:20px;align-items:center;}
+.cd{text-align:center;padding-right:20px;border-right:1px solid var(--border);}
+.cd-n{font-family:'Bebas Neue',sans-serif;font-size:68px;line-height:1;color:var(--cream);}
+.cd-u{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--gold);letter-spacing:2px;}
+.cd-d{font-size:10px;color:var(--muted);margin-top:2px;font-family:'IBM Plex Mono',monospace;}
+.race-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;}
+.ri{display:flex;flex-direction:column;background:var(--s2);border-radius:6px;padding:8px 10px;}
+.ri-k{font-size:9px;color:var(--muted);letter-spacing:1px;font-family:'IBM Plex Mono',monospace;}
+.ri-v{font-size:13px;font-weight:700;margin-top:2px;}
+.ri-v.g{color:var(--gold);}
+.ri-v.r{color:#e06060;}
+
+.phases{display:flex;gap:5px;margin-bottom:14px;}
+.ph{flex:1;background:var(--s1);border:1px solid var(--border);border-radius:6px;padding:8px 6px;text-align:center;transition:all .2s;}
+.ph.cur{border-color:var(--gold);background:#1e1800;}
+.ph.done{border-color:var(--green2);background:#0a1810;}
+.ph.next{opacity:.4;}
+.ph-name{font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:1px;}
+.ph.cur .ph-name{color:var(--gold);}
+.ph.done .ph-name{color:var(--green2);}
+.ph-wk{font-size:9px;color:var(--muted);margin-top:1px;}
+.ph-km{font-size:9px;color:var(--muted);font-family:'IBM Plex Mono',monospace;}
+
+.s4{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px;}
+.sc{background:var(--s1);border:1px solid var(--border);border-radius:8px;padding:12px;text-align:center;}
+.sc-l{font-size:8px;color:var(--muted);letter-spacing:2px;margin-bottom:4px;font-family:'IBM Plex Mono',monospace;}
+.sc-v{font-family:'Bebas Neue',sans-serif;font-size:26px;color:var(--cream);line-height:1;}
+.sc-u{font-size:8px;color:var(--muted);}
+
+.today-card{background:var(--s1);border:1px solid var(--gold);border-radius:10px;padding:16px;margin-bottom:14px;}
+.tc-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;}
+.tc-date{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--gold);}
+.tc-title{font-family:'Bebas Neue',sans-serif;font-size:26px;line-height:1.1;}
+.badge{padding:3px 9px;border-radius:20px;font-size:9px;font-weight:700;letter-spacing:1px;}
+.b-easy{background:#0a1520;color:#6090cc;border:1px solid #1a3050;}
+.b-tempo{background:#1a1000;color:var(--orange2);border:1px solid #3a2000;}
+.b-long{background:#1a0808;color:#e07070;border:1px solid #3a1010;}
+.b-rest{background:#0a1810;color:var(--green2);border:1px solid #1a3820;}
+.b-strength{background:#180a28;color:var(--purple2);border:1px solid #301850;}
+.b-trail{background:#100a00;color:var(--gold);border:1px solid #302000;}
+.b-back{background:#1a0808;color:#e09060;border:1px solid #3a1808;}
+
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;}
+.chip{background:var(--s2);border:1px solid var(--border);border-radius:4px;padding:5px 10px;font-size:11px;}
+.chip-l{font-size:8px;color:var(--muted);font-family:'IBM Plex Mono',monospace;}
+.chip-v{font-weight:700;margin-top:1px;}
+
+.desc-box{font-size:12px;color:#a0a0c0;line-height:1.7;margin-bottom:12px;padding:10px;background:var(--s2);border-radius:6px;border-left:2px solid var(--gold);}
+
+.log-btn{width:100%;padding:11px;background:var(--gold);color:#000;border:none;border-radius:6px;font-family:'Bebas Neue',sans-serif;font-size:17px;letter-spacing:2px;cursor:pointer;transition:all .2s;}
+.log-btn:hover{background:var(--gold2);}
+.log-btn.logged{background:var(--green);color:var(--cream);}
+
+.log-form{background:var(--s2);border:1px solid var(--border);border-radius:6px;padding:14px;margin-top:10px;display:none;}
+.log-form.open{display:block;}
+.fg{display:flex;flex-direction:column;gap:3px;margin-bottom:8px;}
+.fg label{font-size:9px;color:var(--muted);letter-spacing:1px;font-family:'IBM Plex Mono',monospace;}
+.fg input,.fg select,.fg textarea{background:var(--s1);border:1px solid var(--border);border-radius:4px;padding:7px 10px;color:var(--cream);font-family:'Sarabun',sans-serif;font-size:13px;outline:none;}
+.fg input:focus,.fg select:focus{border-color:var(--gold);}
+.fg textarea{height:52px;resize:none;}
+.fg select option{background:var(--s1);}
+.fr2{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.save-btn{padding:7px 18px;background:var(--gold);color:#000;border:none;border-radius:4px;font-family:'Bebas Neue',sans-serif;font-size:15px;cursor:pointer;}
+.save-btn:hover{background:var(--gold2);}
+
+.wgrid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:14px;}
+.wday{background:var(--s1);border:1px solid var(--border);border-radius:5px;padding:7px 4px;text-align:center;font-size:9px;cursor:pointer;transition:all .15s;}
+.wday:hover{border-color:var(--muted);}
+.wday.today-cell{border-color:var(--gold);}
+.wday.logged-cell{border-color:var(--green2);}
+.wd-name{color:var(--muted);font-size:8px;margin-bottom:3px;font-family:'IBM Plex Mono',monospace;}
+.wd-num{font-family:'Bebas Neue',sans-serif;font-size:17px;margin-bottom:3px;}
+.wday.today-cell .wd-num{color:var(--gold);}
+.wday.logged-cell .wd-num{color:var(--green2);}
+.wd-dot{width:5px;height:5px;border-radius:50%;margin:0 auto;background:var(--border);}
+.type-easy .wd-dot{background:#6090cc;}
+.type-tempo .wd-dot{background:var(--orange2);}
+.type-long .wd-dot{background:#e07070;}
+.type-rest .wd-dot{background:var(--green2);}
+.type-strength .wd-dot{background:var(--purple2);}
+.type-trail .wd-dot{background:var(--gold);}
+
+.week-selector{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:14px;}
+.ws-btn{padding:5px 10px;border-radius:4px;font-size:11px;font-weight:600;cursor:pointer;border:1px solid var(--border);background:var(--s1);color:var(--muted);transition:all .15s;font-family:'IBM Plex Mono',monospace;}
+.ws-btn:hover{border-color:var(--muted);color:var(--cream);}
+.ws-btn.on{background:var(--gold);border-color:var(--gold);color:#000;}
+
+.plan-week{background:var(--s1);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:14px;}
+.pw-header{padding:12px 16px;background:var(--s2);display:flex;justify-content:space-between;align-items:center;}
+.pw-title{font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:1px;}
+.pw-phase{font-size:10px;color:var(--gold);font-family:'IBM Plex Mono',monospace;letter-spacing:2px;}
+.pw-vol{font-size:12px;color:var(--muted);font-family:'IBM Plex Mono',monospace;}
+
+.plan-day{display:grid;grid-template-columns:90px 1fr auto;gap:12px;align-items:center;padding:10px 16px;border-top:1px solid var(--border);}
+.plan-day:hover{background:var(--s2);}
+.pd-day{font-size:11px;font-weight:700;}
+.pd-time{font-size:9px;color:var(--muted);font-family:'IBM Plex Mono',monospace;}
+.pd-session{font-size:12px;font-weight:600;margin-bottom:2px;}
+.pd-detail{font-size:11px;color:var(--muted);}
+.pd-km{font-family:'Bebas Neue',sans-serif;font-size:18px;color:var(--muted);}
+.pd-km.has-km{color:var(--cream);}
+
+.nday-toggle{display:flex;gap:5px;margin-bottom:14px;}
+.ndt{padding:6px 14px;border-radius:4px;font-size:12px;font-weight:600;cursor:pointer;border:1px solid var(--border);background:var(--s1);color:var(--muted);transition:all .15s;font-family:'Sarabun',sans-serif;}
+.ndt.on{background:var(--gold);border-color:var(--gold);color:#000;}
+
+.macro3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px;}
+.mc{background:var(--s1);border:1px solid var(--border);border-radius:8px;padding:14px;text-align:center;}
+.mc-name{font-size:9px;color:var(--muted);letter-spacing:2px;font-family:'IBM Plex Mono',monospace;margin-bottom:6px;}
+.mc-g{font-family:'Bebas Neue',sans-serif;font-size:32px;line-height:1;}
+.mc-g span{font-size:13px;color:var(--muted);}
+.mc-sub{font-size:10px;color:var(--muted);margin-top:3px;}
+.mc-bar{height:3px;border-radius:2px;margin-top:8px;background:var(--border);}
+.mc-fill{height:100%;border-radius:2px;}
+
+.meals{display:flex;flex-direction:column;gap:8px;margin-bottom:14px;}
+.meal{background:var(--s1);border:1px solid var(--border);border-radius:6px;padding:12px 14px;display:flex;gap:12px;align-items:flex-start;}
+.meal-t{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--gold);min-width:60px;}
+.meal-c{flex:1;}
+.meal-n{font-size:13px;font-weight:700;margin-bottom:2px;}
+.meal-i{font-size:11px;color:var(--muted);line-height:1.5;}
+.meal-tip{font-size:10px;color:var(--green2);margin-top:3px;}
+.meal-k{font-family:'Bebas Neue',sans-serif;font-size:18px;color:var(--muted);}
+
+.nut-note{background:#0f1a10;border:1px solid #2a4030;border-radius:8px;padding:12px;font-size:12px;color:#80c090;line-height:1.8;margin-bottom:14px;}
+
+.chat-box{background:var(--s1);border:1px solid var(--border);border-radius:10px;height:360px;overflow-y:auto;padding:14px;margin-bottom:10px;display:flex;flex-direction:column;gap:10px;}
+.msg{max-width:90%;}
+.msg.coach{align-self:flex-start;}
+.msg.user{align-self:flex-end;}
+.msg-who{font-size:8px;color:var(--muted);margin-bottom:3px;font-family:'IBM Plex Mono',monospace;}
+.user .msg-who{text-align:right;}
+.bubble{padding:9px 13px;border-radius:8px;font-size:13px;line-height:1.6;}
+.coach .bubble{background:var(--s2);border:1px solid var(--border);}
+.user .bubble{background:var(--gold);color:#000;}
+
+.qa-row{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:8px;}
+.qa{padding:4px 10px;background:var(--s2);border:1px solid var(--border);border-radius:20px;font-size:11px;color:var(--muted);cursor:pointer;transition:all .15s;font-family:'Sarabun',sans-serif;}
+.qa:hover{border-color:var(--gold);color:var(--gold);}
+
+.chat-row{display:flex;gap:7px;}
+.chat-in{flex:1;background:var(--s1);border:1px solid var(--border);border-radius:6px;padding:9px 13px;color:var(--cream);font-family:'Sarabun',sans-serif;font-size:13px;outline:none;}
+.chat-in:focus{border-color:var(--gold);}
+.chat-send{padding:9px 16px;background:var(--gold);color:#000;border:none;border-radius:6px;font-family:'Bebas Neue',sans-serif;font-size:15px;cursor:pointer;}
+.chat-send:hover{background:var(--gold2);}
+.chat-send:disabled{background:var(--border);cursor:not-allowed;}
+
+.log-list{display:flex;flex-direction:column;gap:7px;}
+.li{background:var(--s1);border:1px solid var(--border);border-radius:7px;padding:11px 14px;display:flex;align-items:center;gap:12px;}
+.li-date{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--muted);min-width:58px;}
+.li-icon{font-size:16px;}
+.li-info{flex:1;}
+.li-title{font-size:13px;font-weight:700;}
+.li-detail{font-size:11px;color:var(--muted);margin-top:1px;}
+.li-stats{display:flex;gap:10px;}
+.li-stat{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--gold);}
+.li-del{background:none;border:none;color:var(--muted);cursor:pointer;font-size:14px;padding:2px 6px;}
+.li-del:hover{color:#e06060;}
+
+.empty{text-align:center;padding:36px 16px;color:var(--muted);font-size:13px;}
+.empty-icon{font-size:28px;margin-bottom:8px;}
+
+.dot3 span{display:inline-block;width:5px;height:5px;background:var(--muted);border-radius:50%;margin:0 2px;animation:bl 1.1s infinite;}
+.dot3 span:nth-child(2){animation-delay:.2s;}
+.dot3 span:nth-child(3){animation-delay:.4s;}
+@keyframes bl{0%,80%,100%{opacity:.2}40%{opacity:1}}
+
+::-webkit-scrollbar{width:3px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
+
+@media(max-width:600px){
+  .tabs .tab{padding:4px 7px;font-size:10px;}
+  .hero{grid-template-columns:1fr;gap:12px;}
+  .cd{border-right:none;border-bottom:1px solid var(--border);padding-right:0;padding-bottom:12px;}
+  .s4{grid-template-columns:repeat(2,1fr);}
+  .macro3{grid-template-columns:repeat(3,1fr);}
+  .plan-day{grid-template-columns:70px 1fr auto;}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="brand">NST<b>42</b> <span style="font-size:11px;color:var(--muted);font-family:'IBM Plex Mono',monospace;letter-spacing:1px;">COACH</span></div>
+  <div class="tabs">
+    <button class="tab on" onclick="go('dash')">หน้าหลัก</button>
+    <button class="tab" onclick="go('plan')">แผนซ้อม</button>
+    <button class="tab" onclick="go('nutri')">โภชนาการ</button>
+    <button class="tab" onclick="go('coach')">AI Coach</button>
+    <button class="tab" onclick="go('hist')">ประวัติ</button>
+  </div>
+</nav>
+
+<!-- DASHBOARD -->
+<div class="page on" id="page-dash">
+  <div class="hero">
+    <div class="cd">
+      <div class="cd-u">RACE DAY</div>
+      <div class="cd-n" id="cd-num">—</div>
+      <div class="cd-u">วันที่เหลือ</div>
+      <div class="cd-d">26 ก.ค. 2569 · 05:00</div>
+    </div>
+    <div class="race-grid">
+      <div class="ri"><span class="ri-k">EVENT</span><span class="ri-v g">NST 42</span></div>
+      <div class="ri"><span class="ri-k">GOAL</span><span class="ri-v g">8–10 ชั่วโมง</span></div>
+      <div class="ri"><span class="ri-k">DISTANCE</span><span class="ri-v">42 km</span></div>
+      <div class="ri"><span class="ri-k">ELEVATION</span><span class="ri-v">+1,352 m</span></div>
+      <div class="ri"><span class="ri-k">CUT OFF</span><span class="ri-v r">12 hrs · 17:00</span></div>
+      <div class="ri"><span class="ri-k">PHASE</span><span class="ri-v g" id="cur-phase-lbl">BASE W1</span></div>
+    </div>
+  </div>
+
+  <div class="phases">
+    <div class="ph cur"><div class="ph-name">BASE</div><div class="ph-wk">W1–3 · 23 เม.ย.</div><div class="ph-km">75 km</div></div>
+    <div class="ph next"><div class="ph-name">BUILD 1</div><div class="ph-wk">W4–6 · 14 พ.ค.</div><div class="ph-km">96 km</div></div>
+    <div class="ph next"><div class="ph-name">BUILD 2</div><div class="ph-wk">W7–9 · 4 มิ.ย.</div><div class="ph-km">119 km</div></div>
+    <div class="ph next"><div class="ph-name">PEAK</div><div class="ph-wk">W10–11 · 25 มิ.ย.</div><div class="ph-km">98 km</div></div>
+    <div class="ph next"><div class="ph-name">TAPER</div><div class="ph-wk">W12–13 · 9 ก.ค.</div><div class="ph-km">50 km</div></div>
+  </div>
+
+  <div class="s4">
+    <div class="sc"><div class="sc-l">สัปดาห์นี้</div><div class="sc-v" id="s-weekly">0</div><div class="sc-u">km</div></div>
+    <div class="sc"><div class="sc-l">เซสชันรวม</div><div class="sc-v" id="s-sess">0</div><div class="sc-u">ครั้ง</div></div>
+    <div class="sc"><div class="sc-l">km สะสม</div><div class="sc-v" id="s-total">0</div><div class="sc-u">km</div></div>
+    <div class="sc"><div class="sc-l">เป้า W1</div><div class="sc-v">25</div><div class="sc-u">km</div></div>
+  </div>
+
+  <div class="sec">TODAY'S SESSION</div>
+  <div class="today-card">
+    <div class="tc-top">
+      <div>
+        <div class="tc-date" id="tc-date">—</div>
+        <div class="tc-title" id="tc-title">Easy Run</div>
+      </div>
+      <span class="badge b-easy" id="tc-badge">BASE · W1</span>
+    </div>
+    <div class="chips">
+      <div class="chip"><div class="chip-l">DISTANCE</div><div class="chip-v" id="tc-dist">5 km</div></div>
+      <div class="chip"><div class="chip-l">PACE TARGET</div><div class="chip-v" id="tc-pace">7:30–8:30 /km</div></div>
+      <div class="chip"><div class="chip-l">HR TARGET</div><div class="chip-v" id="tc-hr">≤ 145 bpm</div></div>
+      <div class="chip"><div class="chip-l">เวลา</div><div class="chip-v" id="tc-dur">~45 min</div></div>
+    </div>
+    <div class="desc-box" id="tc-desc">วิ่งช้ามากๆ ให้ HR อยู่ใต้ 145 bpm ถ้า HR เกินให้เดินทันที ช่วงนี้สำคัญที่สุดคือฝึก aerobic base ไม่ใช่ความเร็ว วิ่งแถวบางกะปิ ถนนราบ ระยะ 5 km ก็พอ</div>
+    <button class="log-btn" id="log-btn" onclick="toggleLog()">+ บันทึกผลซ้อม</button>
+    <div class="log-form" id="log-form">
+      <div class="fr2">
+        <div class="fg"><label>DISTANCE (km)</label><input type="number" id="f-dist" placeholder="5.0" step="0.1"></div>
+        <div class="fg"><label>TIME (นาที)</label><input type="number" id="f-time" placeholder="45"></div>
+      </div>
+      <div class="fr2">
+        <div class="fg"><label>PACE AVG (นาที/km)</label><input type="number" id="f-pace" placeholder="8.0" step="0.1"></div>
+        <div class="fg"><label>HR เฉลี่ย (bpm)</label><input type="number" id="f-hr" placeholder="145"></div>
+      </div>
+      <div class="fr2">
+        <div class="fg"><label>ELEVATION (m)</label><input type="number" id="f-elev" placeholder="10"></div>
+        <div class="fg"><label>ความรู้สึก</label>
+          <select id="f-feel">
+            <option value="5">💪 ดีมาก</option>
+            <option value="4">😊 ดี</option>
+            <option value="3" selected>😐 พอใช้</option>
+            <option value="2">😓 เหนื่อยมาก</option>
+            <option value="1">😞 แย่</option>
+          </select>
+        </div>
+      </div>
+      <div class="fg" style="margin-bottom:10px"><label>NOTE</label><textarea id="f-note" placeholder="บันทึกเพิ่มเติม..."></textarea></div>
+      <button class="save-btn" onclick="saveLog()">SAVE SESSION</button>
+    </div>
+  </div>
+
+  <div class="sec" id="week-label">สัปดาห์ที่ 1</div>
+  <div class="wgrid" id="wgrid"></div>
+</div>
+
+<!-- PLAN -->
+<div class="page" id="page-plan">
+  <div class="sec">13-WEEK TRAINING PLAN</div>
+  <div class="week-selector" id="week-sel"></div>
+  <div id="plan-content"></div>
+</div>
+
+<!-- NUTRITION -->
+<div class="page" id="page-nutri">
+  <div class="sec">NUTRITION PLAN</div>
+  <div class="nday-toggle">
+    <button class="ndt on" onclick="setNDay('run',this)">วันซ้อม</button>
+    <button class="ndt" onclick="setNDay('rest',this)">วันพัก</button>
+    <button class="ndt" onclick="setNDay('long',this)">Long Run</button>
+    <button class="ndt" onclick="setNDay('race',this)">Race Day</button>
+  </div>
+  <div class="macro3" id="macros"></div>
+  <div class="nut-note" id="nut-note"></div>
+  <div class="sec">MEAL PLAN</div>
+  <div class="meals" id="meals"></div>
+</div>
+
+<!-- COACH -->
+<div class="page" id="page-coach">
+  <div class="sec">AI COACH · NST42</div>
+  <div class="qa-row">
+    <div class="qa" onclick="ask('วันนี้ควรซ้อมอะไร?')">วันนี้ซ้อมอะไร?</div>
+    <div class="qa" onclick="ask('HR ตอนซ้อมสูงเกินไป จะแก้ยังไง?')">HR สูงเกิน</div>
+    <div class="qa" onclick="ask('อาหารก่อน long run ควรกินอะไร?')">อาหารก่อน long run</div>
+    <div class="qa" onclick="ask('ซ้อมขึ้นเขาครั้งแรกควรทำอย่างไร?')">ซ้อมขึ้นเขาครั้งแรก</div>
+    <div class="qa" onclick="ask('เท้าพอง ควรทำอย่างไร?')">เท้าพอง</div>
+    <div class="qa" onclick="ask('1 สัปดาห์ก่อนแข่ง taper ควรทำอะไร?')">Taper week</div>
+    <div class="qa" onclick="ask('race strategy สำหรับ NST42 42km ควรวางแผนอย่างไร?')">Race strategy</div>
+    <div class="qa" onclick="ask('ควรกิน gel อะไรและกี่ซองสำหรับ 42km?')">Gel strategy</div>
+  </div>
+  <div class="chat-box" id="chat-box">
+    <div class="msg coach">
+      <div class="msg-who">NST42 COACH</div>
+      <div class="bubble">สวัสดีครับ! ผมคือ AI Coach ส่วนตัวของคุณสำหรับ NST42 🏔️<br><br>จากข้อมูล Garmin ของคุณ ผมรู้ว่าคุณวิ่งแถวบางกะปิ pace ประมาณ 6:20–7:00/km แต่ HR อยู่ที่ 155–164 bpm ซึ่ง<strong>สูงเกินไปสำหรับ easy run</strong> ครับ<br><br>เป้าหมายแรกของเราคือ ลด HR ให้วิ่งที่ ≤145 bpm ได้ก่อน แม้จะต้องวิ่งช้าลงถึง 8–9 min/km ก็ตาม นั่นคือทางไปสู่ finish line 8–10 ชั่วโมงครับ 💪</div>
+    </div>
+  </div>
+  <div class="chat-row">
+    <input class="chat-in" id="chat-in" placeholder="ถามอะไรก็ได้เกี่ยวกับ NST42..." onkeydown="if(event.key==='Enter')sendChat()">
+    <button class="chat-send" id="chat-send" onclick="sendChat()">SEND</button>
+  </div>
+</div>
+
+<!-- HISTORY -->
+<div class="page" id="page-hist">
+  <div class="sec">TRAINING LOG</div>
+  <div class="s4">
+    <div class="sc"><div class="sc-l">km รวม</div><div class="sc-v" id="h-km">0</div><div class="sc-u">km</div></div>
+    <div class="sc"><div class="sc-l">เซสชัน</div><div class="sc-v" id="h-sess">0</div><div class="sc-u">ครั้ง</div></div>
+    <div class="sc"><div class="sc-l">เวลารวม</div><div class="sc-v" id="h-time">0</div><div class="sc-u">นาที</div></div>
+    <div class="sc"><div class="sc-l">avg/ครั้ง</div><div class="sc-v" id="h-avg">0</div><div class="sc-u">km</div></div>
+  </div>
+  <div class="log-list" id="log-list">
+    <div class="empty"><div class="empty-icon">🏃</div>ยังไม่มีการบันทึก<br>เริ่มซ้อมและกด "บันทึกผลซ้อม" ได้เลยครับ</div>
+  </div>
+</div>
+
+<script>
+// ═══════════ DATA ═══════════
+const RACE_DATE = new Date(2026, 6, 26);
+const START_DATE = new Date(2026, 3, 23);
+
+const PLAN = [
+  {w:1,phase:'BASE',km:25,days:[
+    {d:'จันทร์',date:'23 เม.ย.',time:'18:30',type:'easy',title:'Easy Run',km:5,pace:'8:00–9:00',hr:'≤145',dur:'~45 min',desc:'วิ่งช้ามากๆ ให้ HR ≤145 bpm ถ้าเกินให้เดิน ถนนราบแถวบ้าน'},
+    {d:'อังคาร',date:'24 เม.ย.',time:'18:30',type:'rest',title:'Rest + Stretching',km:0,pace:'—',hr:'—',dur:'20 min',desc:'พักกล้ามเนื้อ ยืดเหยียด Calf / Hamstring / Hip flexor อย่างน้อย 20 นาที'},
+    {d:'พุธ',date:'25 เม.ย.',time:'18:30',type:'easy',title:'Easy Run + Strides',km:5,pace:'8:00–8:30',hr:'≤148',dur:'~45 min',desc:'Easy run 4 km + strides เร็ว 6×80m พักเดินระหว่างเซต'},
+    {d:'พฤหัส',date:'26 เม.ย.',time:'18:30',type:'strength',title:'Strength Core',km:0,pace:'—',hr:'—',dur:'30 min',desc:'Squat / Lunge / Plank / Glute bridge ท่าละ 3×15 เน้น lower body และ core'},
+    {d:'ศุกร์',date:'27 เม.ย.',time:'—',type:'rest',title:'Rest Day',km:0,pace:'—',hr:'—',dur:'—',desc:'พัก 100% นอนให้พอ 7–8 ชั่วโมง เตรียมร่างกายสำหรับ long run weekend'},
+    {d:'เสาร์',date:'28 เม.ย.',time:'เย็น',type:'easy',title:'Medium Run',km:8,pace:'7:30–8:30',hr:'≤148',dur:'~65 min',desc:'วิ่ง 8 km ราบ รักษา HR ≤148 ถ้ามีบันไดหรือสะพานลองขึ้น-ลงได้'},
+    {d:'อาทิตย์',date:'29 เม.ย.',time:'เช้า',type:'long',title:'Long Run',km:12,pace:'8:00–9:00',hr:'≤150',dur:'~1:45 ชม.',desc:'Long run สำคัญที่สุด วิ่งช้าๆ ดื่มน้ำทุก 20 นาที ถ้าเหนื่อยเดินได้เลย'},
+  ]},
+  {w:2,phase:'BASE',km:28,days:[
+    {d:'จันทร์',date:'30 เม.ย.',time:'18:30',type:'easy',title:'Easy Run',km:6,pace:'7:45–8:30',hr:'≤145',dur:'~50 min',desc:'เพิ่มระยะเป็น 6 km ยังคง HR ≤145 bpm เป็นหลัก'},
+    {d:'อังคาร',date:'1 พ.ค.',time:'18:30',type:'rest',title:'Rest + Yoga',km:0,pace:'—',hr:'—',dur:'20 min',desc:'Yoga หรือยืดเหยียด เน้น hip opener และ IT band'},
+    {d:'พุธ',date:'2 พ.ค.',time:'18:30',type:'tempo',title:'Hill Repeats (บันได)',km:5,pace:'Mix',hr:'≤160',dur:'~50 min',desc:'Warm up 1 km → บันได 6×ขึ้น-ลง พัก 1 นาที → Cool down 1 km เริ่มฝึกขา trail'},
+    {d:'พฤหัส',date:'3 พ.ค.',time:'18:30',type:'easy',title:'Easy Run',km:5,pace:'8:00–8:30',hr:'≤145',dur:'~42 min',desc:'Easy recovery run หลัง hill เมื่อวาน วิ่งช้าๆ ฟัง body'},
+    {d:'ศุกร์',date:'4 พ.ค.',time:'—',type:'rest',title:'Rest Day',km:0,pace:'—',hr:'—',dur:'—',desc:'พัก เตรียมอาหารสำหรับ long run พรุ่งนี้'},
+    {d:'เสาร์',date:'5 พ.ค.',time:'เย็น',type:'easy',title:'Medium Run + Hills',km:10,pace:'7:30–8:30',hr:'≤150',dur:'~80 min',desc:'10 km รวม 4×200m ขึ้นเนิน/บันได'},
+    {d:'อาทิตย์',date:'6 พ.ค.',time:'เช้า',type:'long',title:'Long Run',km:14,pace:'8:00–9:00',hr:'≤152',dur:'~2 ชม.',desc:'Long run 14 km ดื่มน้ำ + เติม gel ที่ km 7 ทดสอบ gear และรองเท้า trail'},
+  ]},
+  {w:3,phase:'BASE 🔄',km:22,days:[
+    {d:'จันทร์',date:'7 พ.ค.',time:'18:30',type:'easy',title:'Easy Run',km:5,pace:'8:00–8:30',hr:'≤143',dur:'~42 min',desc:'Recovery week — ลด volume วิ่งเบาๆ ให้ร่างกายซ่อมแซม'},
+    {d:'อังคาร',date:'8 พ.ค.',time:'18:30',type:'strength',title:'Strength',km:0,pace:'—',hr:'—',dur:'25 min',desc:'Strength เบาๆ Squat / Calf raise / Balance ท่าละ 2×12'},
+    {d:'พุธ',date:'9 พ.ค.',time:'18:30',type:'easy',title:'Easy Run',km:5,pace:'8:00–8:30',hr:'≤143',dur:'~42 min',desc:'Easy run ราบ HR ต่ำ'},
+    {d:'พฤหัส',date:'10 พ.ค.',time:'18:30',type:'rest',title:'Rest',km:0,pace:'—',hr:'—',dur:'—',desc:'พักเต็มๆ หรือเดิน 20 นาที'},
+    {d:'ศุกร์',date:'11 พ.ค.',time:'—',type:'rest',title:'Rest Day',km:0,pace:'—',hr:'—',dur:'—',desc:'พักก่อน weekend'},
+    {d:'เสาร์',date:'12 พ.ค.',time:'เย็น',type:'easy',title:'Easy Medium',km:8,pace:'8:00–8:30',hr:'≤148',dur:'~65 min',desc:'วิ่ง 8 km เบาๆ Recovery week'},
+    {d:'อาทิตย์',date:'13 พ.ค.',time:'เช้า',type:'long',title:'Easy Long Run',km:10,pace:'8:30–9:00',hr:'≤148',dur:'~90 min',desc:'ลด long run เหลือ 10 km ช้าๆ สบาย ประเมิน body หลัง 3 สัปดาห์'},
+  ]},
+  {w:4,phase:'BUILD 1',km:32,days:[
+    {d:'จันทร์',date:'14 พ.ค.',time:'18:30',type:'easy',title:'Easy Run',km:6,pace:'7:30–8:00',hr:'≤148',dur:'~48 min',desc:'เข้าสู่ BUILD phase ความเข้มข้นเพิ่มขึ้น'},
+    {d:'อังคาร',date:'15 พ.ค.',time:'18:30',type:'tempo',title:'Tempo Run',km:6,pace:'6:30–7:00',hr:'≤165',dur:'~42 min',desc:'Warm up 1 km → Tempo 4 km → Cool down 1 km เพิ่ม lactate threshold'},
+    {d:'พุธ',date:'16 พ.ค.',time:'18:30',type:'easy',title:'Easy + Drills',km:5,pace:'8:00',hr:'≤145',dur:'~45 min',desc:'Easy 4 km + drills: high knees / butt kick / A-skip'},
+    {d:'พฤหัส',date:'17 พ.ค.',time:'18:30',type:'strength',title:'Strength Heavy',km:0,pace:'—',hr:'—',dur:'35 min',desc:'Squat 3×15 / Romanian Deadlift 3×12 / Box step-up 3×10/ข้าง'},
+    {d:'ศุกร์',date:'18 พ.ค.',time:'—',type:'rest',title:'Rest Day',km:0,pace:'—',hr:'—',dur:'—',desc:'พักก่อน back-to-back weekend'},
+    {d:'เสาร์',date:'19 พ.ค.',time:'เย็น',type:'trail',title:'Trail/Hill Sim',km:12,pace:'Mix',hr:'≤158',dur:'~1:45 ชม.',desc:'หาเส้นทางที่มี elevation บันไดสนาม / สวนสาธารณะ hill repeat 8×'},
+    {d:'อาทิตย์',date:'20 พ.ค.',time:'เช้า',type:'long',title:'Long Run',km:16,pace:'7:45–8:30',hr:'≤155',dur:'~2:10 ชม.',desc:'Long run 16 km ดื่มน้ำทุก 20 min เติม gel/อาหารที่ km 8'},
+  ]},
+  {w:5,phase:'BUILD 1',km:36,days:[
+    {d:'จันทร์',date:'21 พ.ค.',time:'18:30',type:'easy',title:'Easy Run',km:7,pace:'7:30–8:00',hr:'≤148',dur:'~55 min',desc:'Easy run 7 km'},
+    {d:'อังคาร',date:'22 พ.ค.',time:'18:30',type:'tempo',title:'Interval Training',km:7,pace:'Mix',hr:'≤168',dur:'~55 min',desc:'Warm up 1.5 km → 5×800m (pace 6:00–6:15) → Cool down 1.5 km'},
+    {d:'พุธ',date:'23 พ.ค.',time:'18:30',type:'easy',title:'Easy Recovery',km:5,pace:'8:30',hr:'≤143',dur:'~43 min',desc:'วิ่งเบาๆ หลัง interval เมื่อวาน'},
+    {d:'พฤหัส',date:'24 พ.ค.',time:'18:30',type:'strength',title:'Strength + Balance',km:0,pace:'—',hr:'—',dur:'35 min',desc:'Single-leg squat / lateral lunge / step-down เพื่อความมั่นคงบนเทรล'},
+    {d:'ศุกร์',date:'25 พ.ค.',time:'—',type:'rest',title:'Rest Day',km:0,pace:'—',hr:'—',dur:'—',desc:'พัก'},
+    {d:'เสาร์',date:'26 พ.ค.',time:'เย็น',type:'trail',title:'Hill Climbing Sim',km:14,pace:'Mix',hr:'≤160',dur:'~2 ชม.',desc:'14 km รวม elevation 200–300m walk ขึ้นเขาก็โอเค'},
+    {d:'อาทิตย์',date:'27 พ.ค.',time:'เช้า',type:'long',title:'Long Run',km:18,pace:'7:45–8:30',hr:'≤155',dur:'~2:30 ชม.',desc:'Long run 18 km ทดสอบ gear ทั้งชุด รองเท้า vest น้ำ gel ทุกอย่าง'},
+  ]},
+  {w:6,phase:'BUILD 1 🔄',km:28,days:[
+    {d:'จันทร์',date:'28 พ.ค.',time:'18:30',type:'easy',title:'Easy Run',km:6,pace:'8:00',hr:'≤145',dur:'~48 min',desc:'Recovery week เบาลง'},
+    {d:'อังคาร',date:'29 พ.ค.',time:'18:30',type:'rest',title:'Rest',km:0,pace:'—',hr:'—',dur:'—',desc:'พัก'},
+    {d:'พุธ',date:'30 พ.ค.',time:'18:30',type:'easy',title:'Easy + Strides',km:6,pace:'7:45–8:00',hr:'≤148',dur:'~48 min',desc:'Easy 5 km + strides 6×80m'},
+    {d:'พฤหัส',date:'31 พ.ค.',time:'18:30',type:'strength',title:'Strength',km:0,pace:'—',hr:'—',dur:'25 min',desc:'Strength เบาๆ'},
+    {d:'ศุกร์',date:'1 มิ.ย.',time:'—',type:'rest',title:'Rest Day',km:0,pace:'—',hr:'—',dur:'—',desc:'พัก'},
+    {d:'เสาร์',date:'2 มิ.ย.',time:'เย็น',type:'easy',title:'Medium Run',km:10,pace:'7:45–8:30',hr:'≤150',dur:'~80 min',desc:'10 km เบาๆ'},
+    {d:'อาทิตย์',date:'3 มิ.ย.',time:'เช้า',type:'long',title:'Long Run',km:12,pace:'8:00–8:30',hr:'≤150',dur:'~1:40 ชม.',desc:'12 km เบาๆ recovery week'},
+  ]},
+  {w:7,phase:'BUILD 2 🏔️',km:40,days:[
+    {d:'จันทร์',date:'4 มิ.ย.',time:'18:30',type:'easy',title:'Easy Run',km:7,pace:'7:30',hr:'≤148',dur:'~52 min',desc:'เข้าสู่ BUILD 2 เน้น trail specific'},
+    {d:'อังคาร',date:'5 มิ.ย.',time:'18:30',type:'tempo',title:'Tempo',km:7,pace:'6:30–7:00',hr:'≤165',dur:'~50 min',desc:'Tempo 5 km ใน 7 km total'},
+    {d:'พุธ',date:'6 มิ.ย.',time:'18:30',type:'easy',title:'Easy + Hills',km:6,pace:'Mix',hr:'≤155',dur:'~55 min',desc:'Easy + บันได/เนิน 6 ชุด'},
+    {d:'พฤหัส',date:'7 มิ.ย.',time:'18:30',type:'strength',title:'Strength',km:0,pace:'—',hr:'—',dur:'35 min',desc:'Heavy strength'},
+    {d:'ศุกร์',date:'8 มิ.ย.',time:'—',type:'rest',title:'Rest Day',km:0,pace:'—',hr:'—',dur:'—',desc:'พัก เตรียมสำหรับ trail weekend'},
+    {d:'เสาร์',date:'9 มิ.ย.',time:'เย็น',type:'trail',title:'⭐ Trail จริง!',km:10,pace:'Mix',hr:'≤162',dur:'~2 ชม.',desc:'⭐ ซ้อมบนเขาจริงครั้งแรก! walk-run ขึ้นเขา ลงระวังเข่า ไม่ต้องเร็ว'},
+    {d:'อาทิตย์',date:'10 มิ.ย.',time:'เช้า',type:'long',title:'Long Run Road',km:18,pace:'7:45–8:30',hr:'≤155',dur:'~2:25 ชม.',desc:'Long run ถนน ขาที่ยังเมื่อยจาก trail เมื่อวาน เน้น time on feet'},
+  ]},
+  {w:8,phase:'BUILD 2 🏔️',km:44,days:[
+    {d:'จันทร์',date:'11 มิ.ย.',time:'18:30',type:'easy',title:'Easy Run',km:7,pace:'7:30',hr:'≤148',dur:'~52 min',desc:'Easy run'},
+    {d:'อังคาร',date:'12 มิ.ย.',time:'18:30',type:'tempo',title:'Interval',km:8,pace:'Mix',hr:'≤168',dur:'~60 min',desc:'6×800m interval'},
+    {d:'พุธ',date:'13 มิ.ย.',time:'18:30',type:'easy',title:'Easy Recovery',km:6,pace:'8:00',hr:'≤145',dur:'~48 min',desc:'Recovery run'},
+    {d:'พฤหัส',date:'14 มิ.ย.',time:'18:30',type:'strength',title:'Strength',km:0,pace:'—',hr:'—',dur:'35 min',desc:'Heavy strength'},
+    {d:'ศุกร์',date:'15 มิ.ย.',time:'—',type:'rest',title:'Rest Day',km:0,pace:'—',hr:'—',dur:'—',desc:'พัก'},
+    {d:'เสาร์',date:'16 มิ.ย.',time:'เย็น',type:'trail',title:'⭐ Trail Run 14km',km:14,pace:'Mix',hr:'≤162',dur:'~2:30 ชม.',desc:'⭐ Trail 14 km ฝึก walk power ขึ้นชัน วิ่งลงให้มั่นใจ ฝึกกินน้ำ-gel บนเส้นทาง'},
+    {d:'อาทิตย์',date:'17 มิ.ย.',time:'เช้า',type:'long',title:'Back-to-Back Long',km:20,pace:'7:45–8:30',hr:'≤158',dur:'~2:45 ชม.',desc:'Back-to-back long 20 km ซ้อมขาล้า เหมือนช่วง km 20–42 ของ race day'},
+  ]},
+  {w:9,phase:'BUILD 2 🔄',km:35,days:[
+    {d:'จันทร์',date:'18 มิ.ย.',time:'18:30',type:'easy',title:'Easy Run',km:6,pace:'8:00',hr:'≤145',dur:'~48 min',desc:'Recovery week'},
+    {d:'อังคาร',date:'19 มิ.ย.',time:'18:30',type:'rest',title:'Rest',km:0,pace:'—',hr:'—',dur:'—',desc:'พัก'},
+    {d:'พุธ',date:'20 มิ.ย.',time:'18:30',type:'tempo',title:'Tempo Light',km:7,pace:'7:00',hr:'≤158',dur:'~50 min',desc:'Tempo เบา'},
+    {d:'พฤหัส',date:'21 มิ.ย.',time:'18:30',type:'easy',title:'Easy Run',km:6,pace:'8:00',hr:'≤145',dur:'~48 min',desc:'Easy run'},
+    {d:'ศุกร์',date:'22 มิ.ย.',time:'—',type:'rest',title:'Rest Day',km:0,pace:'—',hr:'—',dur:'—',desc:'พัก'},
+    {d:'เสาร์',date:'23 มิ.ย.',time:'เย็น',type:'trail',title:'Trail Easy',km:10,pace:'Mix',hr:'≤155',dur:'~1:45 ชม.',desc:'Trail 10 km เบาๆ'},
+    {d:'อาทิตย์',date:'24 มิ.ย.',time:'เช้า',type:'long',title:'Long Run',km:14,pace:'8:00–8:30',hr:'≤152',dur:'~1:55 ชม.',desc:'Long run เบา recovery week'},
+  ]},
+  {w:10,phase:'PEAK 🔥',km:48,days:[
+    {d:'จันทร์',date:'25 มิ.ย.',time:'18:30',type:'easy',title:'Easy Run',km:8,pace:'7:30',hr:'≤150',dur:'~60 min',desc:'เข้าสู่ PEAK phase สัปดาห์หนักมาก'},
+    {d:'อังคาร',date:'26 มิ.ย.',time:'18:30',type:'tempo',title:'Tempo + Hills',km:8,pace:'Mix',hr:'≤168',dur:'~60 min',desc:'Tempo 5 km + hill repeats 4×'},
+    {d:'พุธ',date:'27 มิ.ย.',time:'18:30',type:'easy',title:'Easy Run',km:6,pace:'8:00',hr:'≤145',dur:'~48 min',desc:'Recovery easy'},
+    {d:'พฤหัส',date:'28 มิ.ย.',time:'18:30',type:'strength',title:'Strength Final',km:0,pace:'—',hr:'—',dur:'35 min',desc:'Strength สุดท้ายก่อน taper เน้น legs'},
+    {d:'ศุกร์',date:'29 มิ.ย.',time:'—',type:'rest',title:'Rest Day',km:0,pace:'—',hr:'—',dur:'—',desc:'พัก'},
+    {d:'เสาร์',date:'30 มิ.ย.',time:'เย็น',type:'trail',title:'⭐ Trail Hard 16km',km:16,pace:'Mix',hr:'≤165',dur:'~3 ชม.',desc:'⭐ Trail 16 km เน้น elevation 600–800m ฝึก fueling ทุก 45 นาที'},
+    {d:'อาทิตย์',date:'1 ก.ค.',time:'เช้า',type:'long',title:'Long Run Peak',km:22,pace:'7:30–8:00',hr:'≤160',dur:'~3 ชม.',desc:'Long run สูงสุด 22 km back-to-back กับ trail เมื่อวาน'},
+  ]},
+  {w:11,phase:'PEAK 🔥',km:50,days:[
+    {d:'จันทร์',date:'2 ก.ค.',time:'18:30',type:'easy',title:'Easy Run',km:8,pace:'7:30',hr:'≤150',dur:'~60 min',desc:'Peak week สูงสุด 50 km'},
+    {d:'อังคาร',date:'3 ก.ค.',time:'18:30',type:'tempo',title:'Race Pace Tempo',km:8,pace:'7:00–7:30',hr:'≤162',dur:'~58 min',desc:'ฝึก race pace สำหรับส่วนราบ'},
+    {d:'พุธ',date:'4 ก.ค.',time:'18:30',type:'easy',title:'Easy Recovery',km:6,pace:'8:30',hr:'≤143',dur:'~51 min',desc:'Easy recovery'},
+    {d:'พฤหัส',date:'5 ก.ค.',time:'18:30',type:'easy',title:'Easy + Strides',km:6,pace:'7:45',hr:'≤150',dur:'~48 min',desc:'Easy + 8×strides สั้น'},
+    {d:'ศุกร์',date:'6 ก.ค.',time:'—',type:'rest',title:'Rest Day',km:0,pace:'—',hr:'—',dur:'—',desc:'พักก่อง biggest weekend'},
+    {d:'เสาร์',date:'7 ก.ค.',time:'เย็น',type:'trail',title:'⭐ Race Sim Trail',km:18,pace:'Mix',hr:'≤165',dur:'~3:30 ชม.',desc:'⭐ Race simulation บน trail 18 km ใส่ gear ครบ กิน/ดื่มเหมือน race day จริง'},
+    {d:'อาทิตย์',date:'8 ก.ค.',time:'เช้า',type:'long',title:'Back-to-Back Final',km:20,pace:'7:30–8:00',hr:'≤160',dur:'~2:45 ชม.',desc:'สัปดาห์หนักที่สุดเสร็จแล้ว! หลังจากนี้คือ taper'},
+  ]},
+  {w:12,phase:'TAPER',km:32,days:[
+    {d:'จันทร์',date:'9 ก.ค.',time:'18:30',type:'easy',title:'Easy Run',km:7,pace:'7:30',hr:'≤148',dur:'~52 min',desc:'เริ่ม TAPER ลด volume รักษา intensity'},
+    {d:'อังคาร',date:'10 ก.ค.',time:'18:30',type:'rest',title:'Rest',km:0,pace:'—',hr:'—',dur:'—',desc:'พัก'},
+    {d:'พุธ',date:'11 ก.ค.',time:'18:30',type:'tempo',title:'Sharpening Tempo',km:7,pace:'6:45–7:00',hr:'≤162',dur:'~50 min',desc:'Tempo คม 4 km ใน 7 km total'},
+    {d:'พฤหัส',date:'12 ก.ค.',time:'18:30',type:'easy',title:'Easy Run',km:5,pace:'7:45',hr:'≤148',dur:'~39 min',desc:'Easy run สั้น'},
+    {d:'ศุกร์',date:'13 ก.ค.',time:'—',type:'rest',title:'Rest Day',km:0,pace:'—',hr:'—',dur:'—',desc:'พัก'},
+    {d:'เสาร์',date:'14 ก.ค.',time:'เย็น',type:'trail',title:'Short Trail',km:8,pace:'Mix',hr:'≤155',dur:'~1:30 ชม.',desc:'Trail สั้น 8 km เอาขาจำ feel trail ไว้'},
+    {d:'อาทิตย์',date:'15 ก.ค.',time:'เช้า',type:'long',title:'Medium Long',km:14,pace:'7:30–8:00',hr:'≤152',dur:'~1:50 ชม.',desc:'Long run สุดท้ายก่อน race week'},
+  ]},
+  {w:13,phase:'RACE WEEK 🏁',km:18,days:[
+    {d:'จันทร์',date:'16 ก.ค.',time:'18:30',type:'easy',title:'Easy Shakeout',km:5,pace:'7:30',hr:'≤145',dur:'~38 min',desc:'วิ่งเบาๆ ขาสบาย'},
+    {d:'อังคาร',date:'17 ก.ค.',time:'18:30',type:'easy',title:'Easy + Strides',km:5,pace:'7:30',hr:'≤145',dur:'~38 min',desc:'Easy + 4×strides เอาขาให้ตื่น'},
+    {d:'พุธ',date:'18 ก.ค.',time:'18:30',type:'easy',title:'Easy Jog',km:4,pace:'8:00',hr:'≤140',dur:'~32 min',desc:'Jog สบายๆ 4 km'},
+    {d:'พฤหัส',date:'19 ก.ค.',time:'18:30',type:'rest',title:'Rest',km:0,pace:'—',hr:'—',dur:'—',desc:'พัก เช็ค gear ทั้งหมด'},
+    {d:'ศุกร์',date:'20 ก.ค.',time:'—',type:'rest',title:'Travel Day 🚗',km:0,pace:'—',hr:'—',dur:'—',desc:'เดินทางไปนครสวรรค์ เช็ค gear เข้านอนเร็ว'},
+    {d:'เสาร์',date:'21 ก.ค.',time:'เช้า',type:'easy',title:'Pre-race Shakeout',km:4,pace:'—',hr:'—',dur:'20 min',desc:'Shakeout สั้น 4 km รับ BIB เตรียม carb load'},
+    {d:'อาทิตย์',date:'22 ก.ค.',time:'—',type:'rest',title:'Rest Final 💤',km:0,pace:'—',hr:'—',dur:'—',desc:'พักสุดท้าย นอน 21:00 ตื่น 02:00 กิน pre-race meal'},
+  ]},
+];
+
+const NUTRITION = {
+  run:{label:'วันซ้อม',kcal:2550,carb:{g:340,pct:53,color:'#c9933a'},protein:{g:140,pct:22,color:'#5a8acc'},fat:{g:80,pct:28,color:'#4aaa78'},
+    note:'💧 น้ำ 3–3.5 ลิตร · Electrolyte 1 ซอง · กิน carb 1–2 ชม.ก่อนซ้อม · โปรตีน 30–40g หลังซ้อม 30 นาที',
+    meals:[{t:'06:00',n:'มื้อเช้า',i:'ข้าวต้มหมู/ไก่ 1.5 ถ้วย + ไข่ต้ม 2 ฟอง + กล้วยหอม 1 ลูก',tip:'',k:420},{t:'12:00',n:'กลางวัน',i:'ข้าวกล้อง + ไก่ย่าง/ปลา 150g + ผักนึ่ง + ซุปใส',tip:'',k:580},{t:'16:30',n:'Pre-run Snack',i:'กล้วย 2 ลูก + โยเกิร์ต หรือ ข้าวเหนียวมะม่วง',tip:'กิน 1.5–2 ชม.ก่อนวิ่ง',k:280},{t:'19:30',n:'Post-run Recovery',i:'ข้าวกล้อง + โปรตีน 150g + ผัก + นม 1 แก้ว',tip:'กินภายใน 30 นาทีหลังวิ่ง',k:620},{t:'21:00',n:'Night Snack',i:'กรีกโยเกิร์ต + ถั่วอบ หรือ นม 1 แก้ว',tip:'',k:220}]},
+  rest:{label:'วันพัก',kcal:2100,carb:{g:250,pct:48,color:'#c9933a'},protein:{g:150,pct:29,color:'#5a8acc'},fat:{g:75,pct:32,color:'#4aaa78'},
+    note:'💧 น้ำ 2.5–3 ลิตร · ลด carb 25% · เพิ่ม protein ช่วย recovery · หลีกเลี่ยงแอลกอฮอล์',
+    meals:[{t:'07:00',n:'มื้อเช้า',i:'ไข่คน 3 ฟอง + ขนมปัง whole grain + ผลไม้',tip:'',k:380},{t:'12:00',n:'กลางวัน',i:'สลัดไก่/ทูน่า + ข้าวกล้อง + ผัก',tip:'',k:520},{t:'15:00',n:'บ่าย',i:'ถั่วอบ 30g + แอปเปิ้ล',tip:'',k:180},{t:'19:00',n:'มื้อเย็น',i:'ปลาอบ/สเต็กไก่ + ผักอบ + สลัด',tip:'',k:550},{t:'21:00',n:'Night',i:'กรีกโยเกิร์ต 1 ถ้วย',tip:'',k:120}]},
+  long:{label:'Long Run Day',kcal:2900,carb:{g:420,pct:58,color:'#c9933a'},protein:{g:140,pct:19,color:'#5a8acc'},fat:{g:80,pct:25,color:'#4aaa78'},
+    note:'⚡ เพิ่ม carb 20–25% · กิน carb ทุก 40–45 นาทีระหว่างวิ่ง · gel/ข้าวเหนียว/กล้วย · น้ำ 500ml ทุก 30 นาที',
+    meals:[{t:'05:30',n:'Pre-run (3h ก่อน)',i:'ข้าวต้ม 2 ถ้วย + ไข่ต้ม 2 ฟอง + กล้วย',tip:'ย่อยง่าย ไม่หนักท้อง',k:480},{t:'ระหว่างวิ่ง',n:'On-run Fuel (ทุก 45 min)',i:'Energy gel 1 ซอง หรือ กล้วย 1 ลูก หรือ ข้าวเหนียวไก่',tip:'ฝึกกินตอนวิ่งให้ชิน',k:100},{t:'หลังวิ่ง',n:'Recovery Shake',i:'โปรตีนเชค + กล้วย 2 ลูก ทันทีหลังวิ่ง',tip:'Golden window 30 นาที',k:380},{t:'12:00',n:'กลางวัน',i:'ข้าว 2 ถ้วย + ไก่ย่าง + ผัก + ซุป',tip:'เติม glycogen',k:680},{t:'19:00',n:'มื้อเย็น',i:'พาสต้า/ข้าวกล้อง + โปรตีน + ผัก',tip:'',k:620}]},
+  race:{label:'Race Day · 26 ก.ค.',kcal:3200,carb:{g:480,pct:60,color:'#c9933a'},protein:{g:120,pct:15,color:'#5a8acc'},fat:{g:80,pct:23,color:'#4aaa78'},
+    note:'🏁 ตื่น 02:00 → กิน 02:30 → ถึงสนาม 04:00 → Start 05:00 · กิน 250–300 kcal ทุก 45 นาทีตลอด race',
+    meals:[{t:'02:30',n:'Pre-race Meal',i:'ข้าวต้ม 2 ถ้วย + ไข่ 2 ฟอง + กล้วย + น้ำผึ้ง',tip:'กิน 2.5 ชม.ก่อน start',k:480},{t:'04:30',n:'Final Boost',i:'กล้วย 1 ลูก + energy gel 1 ซอง + น้ำ 300ml',tip:'30 นาทีก่อน start',k:200},{t:'A1 7.5km',n:'Aid A1',i:'น้ำ + Pocari + ผลไม้ + gel',tip:'',k:150},{t:'A2 12km',n:'Aid A2',i:'น้ำ + Pocari + ข้าวเหนียว/กล้วย',tip:'จุดสูงสุด กินก่อนลงเขา',k:200},{t:'A3 21km',n:'Aid A3',i:'น้ำ + อาหาร + เติม gel สำรอง',tip:'',k:250},{t:'A4 27.5km',n:'Aid A4',i:'น้ำ + อาหารจริง + soup',tip:'จุดสำคัญ เติมให้เต็ม',k:300}]},
+};
+
+// ═══════════ STATE ═══════════
+let logs = [];
+let selWeek = 1;
+let nDay = 'run';
+
+function loadLogs(){try{logs=JSON.parse(localStorage.getItem('nst42v2')||'[]');}catch(e){logs=[];}}
+function saveLogs(){try{localStorage.setItem('nst42v2',JSON.stringify(logs));}catch(e){}}
+loadLogs();
+
+// ═══════════ COUNTDOWN ═══════════
+function updateCountdown(){
+  const now = new Date();
+  const diff = Math.ceil((RACE_DATE - now) / 86400000);
+  document.getElementById('cd-num').textContent = Math.max(0, diff);
+  const days = ['อา','จ','อ','พ','พฤ','ศ','ส'];
+  const months = ['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
+  document.getElementById('tc-date').textContent = `${days[now.getDay()]} · ${now.getDate()} ${months[now.getMonth()]} ${now.getFullYear()}`;
+}
+
+// ═══════════ NAV ═══════════
+function go(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
+  document.getElementById('page-'+id).classList.add('on');
+  const map={dash:0,plan:1,nutri:2,coach:3,hist:4};
+  if(map[id]!==undefined) document.querySelectorAll('.tab')[map[id]].classList.add('on');
+  if(id==='plan') renderPlan();
+  if(id==='nutri') renderNutri();
+  if(id==='hist') renderHist();
+}
+
+// ═══════════ WEEK GRID ═══════════
+function renderWeekGrid(){
+  const el = document.getElementById('wgrid');
+  const w1 = PLAN[0].days;
+  el.innerHTML = w1.map((d,i)=>{
+    const num = 23+i;
+    const isToday = num===23;
+    const hasLog = logs.some(l=>l.date===d.date);
+    return `<div class="wday type-${d.type} ${isToday?'today-cell':''} ${hasLog?'logged-cell':''}" onclick="go('plan')">
+      <div class="wd-name">${d.d.slice(0,2)}</div>
+      <div class="wd-num">${num}</div>
+      <div class="wd-dot"></div>
+    </div>`;
+  }).join('');
+}
+
+// ═══════════ STATS ═══════════
+function updateStats(){
+  const total = logs.reduce((s,l)=>s+(parseFloat(l.dist)||0),0);
+  const weekly = logs.filter(l=>l.week===1).reduce((s,l)=>s+(parseFloat(l.dist)||0),0);
+  const totalMin = logs.reduce((s,l)=>s+(parseInt(l.time)||0),0);
+  document.getElementById('s-weekly').textContent = weekly.toFixed(1);
+  document.getElementById('s-sess').textContent = logs.length;
+  document.getElementById('s-total').textContent = total.toFixed(1);
+  document.getElementById('h-km').textContent = total.toFixed(1);
+  document.getElementById('h-sess').textContent = logs.length;
+  document.getElementById('h-time').textContent = totalMin;
+  document.getElementById('h-avg').textContent = logs.length?(total/logs.length).toFixed(1):'0';
+}
+
+// ═══════════ LOG ═══════════
+function toggleLog(){
+  document.getElementById('log-form').classList.toggle('open');
+}
+function saveLog(){
+  const dist = document.getElementById('f-dist').value;
+  if(!dist){alert('กรอก distance ก่อนนะครับ');return;}
+  const entry = {
+    id:Date.now(), date:'23 เม.ย.', week:1,
+    title:document.getElementById('tc-title').textContent,
+    type:'easy', dist,
+    time:document.getElementById('f-time').value,
+    pace:document.getElementById('f-pace').value,
+    hr:document.getElementById('f-hr').value,
+    elev:document.getElementById('f-elev').value,
+    feel:document.getElementById('f-feel').value,
+    note:document.getElementById('f-note').value
+  };
+  logs.unshift(entry); saveLogs(); updateStats();
+  document.getElementById('log-form').classList.remove('open');
+  const btn = document.getElementById('log-btn');
+  btn.textContent = '✓ บันทึกแล้ว'; btn.classList.add('logged');
+  renderWeekGrid(); renderHist();
+}
+
+// ═══════════ PLAN ═══════════
+function renderPlan(){
+  const sel = document.getElementById('week-sel');
+  sel.innerHTML = PLAN.map(w=>`<button class="ws-btn ${w.w===selWeek?'on':''}" onclick="selectWeek(${w.w})">W${w.w}</button>`).join('');
+  const wk = PLAN.find(w=>w.w===selWeek);
+  const typeColor = {easy:'#6090cc',tempo:'#ca8030',long:'#e07070',rest:'#4aaa78',strength:'#8a6acc',trail:'#c9933a',back:'#e09060'};
+  document.getElementById('plan-content').innerHTML = `
+    <div class="plan-week">
+      <div class="pw-header">
+        <div><div class="pw-title">สัปดาห์ที่ ${wk.w}</div><div class="pw-phase">${wk.phase}</div></div>
+        <div class="pw-vol">เป้า: ${wk.km} km</div>
+      </div>
+      ${wk.days.map(d=>`
+        <div class="plan-day">
+          <div>
+            <div class="pd-day" style="color:${d.km>0?'var(--cream)':'var(--muted)'}">${d.d}</div>
+            <div class="pd-time">${d.date} · ${d.time}</div>
+          </div>
+          <div>
+            <div class="pd-session" style="color:${typeColor[d.type]||'var(--cream)'}">${d.title}</div>
+            <div class="pd-detail">${d.desc}</div>
+            ${d.km>0?`<div style="font-size:10px;color:var(--muted);margin-top:3px;font-family:'IBM Plex Mono',monospace;">pace ${d.pace} · HR ${d.hr} · ${d.dur}</div>`:''}
+          </div>
+          <div class="pd-km ${d.km>0?'has-km':''}">${d.km>0?d.km+'<br><span style="font-size:9px">km</span>':'—'}</div>
+        </div>`).join('')}
+    </div>`;
+}
+function selectWeek(w){selWeek=w;renderPlan();}
+
+// ═══════════ NUTRITION ═══════════
+function setNDay(type,btn){
+  nDay=type;
+  document.querySelectorAll('.ndt').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  renderNutri();
+}
+function renderNutri(){
+  const n = NUTRITION[nDay];
+  document.getElementById('macros').innerHTML = ['carb','protein','fat'].map(k=>`
+    <div class="mc">
+      <div class="mc-name">${k.toUpperCase()}</div>
+      <div class="mc-g">${n[k].g}<span>g</span></div>
+      <div class="mc-sub">${n[k].pct}% · ${n[k].g*(k==='fat'?9:4)} kcal</div>
+      <div class="mc-bar"><div class="mc-fill" style="width:${n[k].pct}%;background:${n[k].color}"></div></div>
+    </div>`).join('');
+  document.getElementById('nut-note').innerHTML = n.note;
+  document.getElementById('meals').innerHTML = n.meals.map(m=>`
+    <div class="meal">
+      <div class="meal-t">${m.t}</div>
+      <div class="meal-c">
+        <div class="meal-n">${m.n}</div>
+        <div class="meal-i">${m.i}</div>
+        ${m.tip?`<div class="meal-tip">💡 ${m.tip}</div>`:''}
+      </div>
+      <div class="meal-k">${m.k}<br><span style="font-size:9px;color:var(--muted)">kcal</span></div>
+    </div>`).join('');
+}
+
+// ═══════════ HISTORY ═══════════
+function renderHist(){
+  const el = document.getElementById('log-list');
+  if(!logs.length){el.innerHTML='<div class="empty"><div class="empty-icon">🏃</div>ยังไม่มีการบันทึก<br>เริ่มซ้อมและกด "บันทึกผลซ้อม" ได้เลยครับ</div>';return;}
+  const icons={easy:'🏃',tempo:'⚡',long:'🌄',rest:'😴',strength:'💪',trail:'🏔️',back:'🔥'};
+  el.innerHTML = logs.map(l=>`
+    <div class="li">
+      <div class="li-date">${l.date}</div>
+      <div class="li-icon">${icons[l.type]||'🏃'}</div>
+      <div class="li-info">
+        <div class="li-title">${l.title||'Training'}</div>
+        <div class="li-detail">${l.note||'—'} ${'⭐'.repeat(parseInt(l.feel)||3)}</div>
+      </div>
+      <div class="li-stats">
+        <div class="li-stat">${l.dist} km</div>
+        ${l.time?`<div class="li-stat">${l.time} min</div>`:''}
+        ${l.hr?`<div class="li-stat">${l.hr} bpm</div>`:''}
+      </div>
+      <button class="li-del" onclick="deleteLog(${l.id})">✕</button>
+    </div>`).join('');
+}
+function deleteLog(id){
+  if(!confirm('ลบ session นี้?')) return;
+  logs = logs.filter(l=>l.id!==id);
+  saveLogs(); updateStats(); renderHist(); renderWeekGrid();
+}
+
+// ═══════════ AI COACH ═══════════
+const SYS = `คุณคือ AI Coach ผู้เชี่ยวชาญด้านการวิ่งเทรลสำหรับ NST42 โดยเฉพาะ ตอบเป็นภาษาไทย กระชับ ตรงประเด็น เป็นกันเอง
+ข้อมูลนักวิ่ง: อายุ 34 ปี / 65 kg / 163 cm / เป้าหมาย Finish NST42 42km ใน 8-10 ชั่วโมง
+Pace ปัจจุบัน 6:20-7:00 /km แต่ HR 155-164 bpm (Zone 4 — สูงเกินสำหรับ easy run)
+ระยะสูงสุดที่เคยวิ่ง 13.8 km / volume 4 สัปดาห์ล่าสุด 22.6 km / ไม่มีประสบการณ์เทรลเลย
+วันแข่ง 26 กรกฎาคม 2569 / ซ้อมแถวบางกะปิพื้นที่ราบ / ซ้อมเขาจริงได้เดือน พ.ค. เป็นต้นไป
+แผน 13 สัปดาห์ BASE→BUILD1→BUILD2→PEAK→TAPER รวม 438 km
+ตอบสั้น ปฏิบัติได้จริง ไม่เกิน 150 คำ`;
+
+function ask(q){document.getElementById('chat-in').value=q;sendChat();}
+
+async function sendChat(){
+  const inp = document.getElementById('chat-in');
+  const q = inp.value.trim(); if(!q) return;
+  inp.value = '';
+  const box = document.getElementById('chat-box');
+  box.innerHTML += `<div class="msg user"><div class="msg-who">คุณ</div><div class="bubble">${q}</div></div>`;
+  const typing = document.createElement('div');
+  typing.className = 'msg coach';
+  typing.innerHTML = `<div class="msg-who">NST42 COACH</div><div class="bubble"><div class="dot3"><span></span><span></span><span></span></div></div>`;
+  box.appendChild(typing); box.scrollTop = box.scrollHeight;
+  const btn = document.getElementById('chat-send'); btn.disabled = true;
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:600,system:SYS,messages:[{role:'user',content:q}]})
+    });
+    const data = await res.json();
+    const reply = data.content?.[0]?.text||'ขออภัยครับ ลองใหม่อีกครั้ง';
+    typing.querySelector('.bubble').innerHTML = reply.replace(/\n/g,'<br>');
+  } catch(e){
+    typing.querySelector('.bubble').innerHTML = 'ขออภัยครับ ไม่สามารถเชื่อมต่อได้ชั่วคราว';
+  }
+  btn.disabled = false; box.scrollTop = box.scrollHeight;
+}
+
+// ═══════════ INIT ═══════════
+updateCountdown();
+setInterval(updateCountdown, 60000);
+renderWeekGrid();
+updateStats();
+renderNutri();
+</script>
+</body>
+</html>
