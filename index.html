@@ -99,7 +99,7 @@ nav{background:var(--s1);border-bottom:1px solid var(--border);padding:0 16px;di
 .save-btn{padding:7px 18px;background:var(--gold);color:#000;border:none;border-radius:4px;font-family:'Bebas Neue',sans-serif;font-size:15px;cursor:pointer;}
 .save-btn:hover{background:var(--gold2);}
 
-.wgrid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:14px;}
+.wgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;margin-bottom:14px;}
 .wday{background:var(--s1);border:1px solid var(--border);border-radius:5px;padding:7px 4px;text-align:center;font-size:9px;cursor:pointer;transition:all .15s;}
 .wday:hover{border-color:var(--muted);}
 .wday.today-cell{border-color:var(--gold);}
@@ -305,7 +305,7 @@ nav{background:var(--s1);border-bottom:1px solid var(--border);padding:0 16px;di
     </div>
   </div>
 
-  <div class="sec" id="week-label">สัปดาห์ที่ 1</div>
+  <div class="sec">W1 · พฤ 23 – อา 26 เม.ย. (เริ่มวันนี้!)</div>
   <div class="wgrid" id="wgrid"></div>
 </div>
 
@@ -376,122 +376,119 @@ const RACE_DATE = new Date(2026, 6, 26);
 const START_DATE = new Date(2026, 3, 23);
 
 const PLAN = [
-  {w:1,phase:'BASE',km:25,days:[
-    {d:'จันทร์',date:'23 เม.ย.',time:'18:30',type:'easy',title:'Easy Run',km:5,pace:'8:00–9:00',hr:'≤145',dur:'~45 min',desc:'วิ่งช้ามากๆ ให้ HR ≤145 bpm ถ้าเกินให้เดิน ถนนราบแถวบ้าน'},
-    {d:'อังคาร',date:'24 เม.ย.',time:'18:30',type:'rest',title:'Rest + Stretching',km:0,pace:'—',hr:'—',dur:'20 min',desc:'พักกล้ามเนื้อ ยืดเหยียด Calf / Hamstring / Hip flexor อย่างน้อย 20 นาที'},
-    {d:'พุธ',date:'25 เม.ย.',time:'18:30',type:'easy',title:'Easy Run + Strides',km:5,pace:'8:00–8:30',hr:'≤148',dur:'~45 min',desc:'Easy run 4 km + strides เร็ว 6×80m พักเดินระหว่างเซต'},
-    {d:'พฤหัส',date:'26 เม.ย.',time:'18:30',type:'strength',title:'Strength Core',km:0,pace:'—',hr:'—',dur:'30 min',desc:'Squat / Lunge / Plank / Glute bridge ท่าละ 3×15 เน้น lower body และ core'},
-    {d:'ศุกร์',date:'27 เม.ย.',time:'—',type:'rest',title:'Rest Day',km:0,pace:'—',hr:'—',dur:'—',desc:'พัก 100% นอนให้พอ 7–8 ชั่วโมง เตรียมร่างกายสำหรับ long run weekend'},
-    {d:'เสาร์',date:'28 เม.ย.',time:'เย็น',type:'easy',title:'Medium Run',km:8,pace:'7:30–8:30',hr:'≤148',dur:'~65 min',desc:'วิ่ง 8 km ราบ รักษา HR ≤148 ถ้ามีบันไดหรือสะพานลองขึ้น-ลงได้'},
-    {d:'อาทิตย์',date:'29 เม.ย.',time:'เช้า',type:'long',title:'Long Run',km:12,pace:'8:00–9:00',hr:'≤150',dur:'~1:45 ชม.',desc:'Long run สำคัญที่สุด วิ่งช้าๆ ดื่มน้ำทุก 20 นาที ถ้าเหนื่อยเดินได้เลย'},
+  // W1: เริ่มพฤหัส 23 เม.ย. (short intro week พฤ ส อา)
+  {w:1,phase:'BASE',km:15,days:[
+    {d:'พฤหัส',date:'23 เม.ย.',time:'18:30',type:'easy',title:'Easy Run',km:5,pace:'8:00–9:00',hr:'≤145',dur:'~45 min',desc:'วิ่งช้ามากๆ ให้ HR ≤145 bpm ถ้าเกินให้เดิน เป้าหมายคือ aerobic base ไม่ใช่ความเร็ว'},
+    {d:'เสาร์',date:'25 เม.ย.',time:'เย็น',type:'easy',title:'Easy Run + Strides',km:6,pace:'7:30–8:30',hr:'≤148',dur:'~50 min',desc:'วิ่ง 5 km + strides 6×80m พักเดินระหว่างเซต ลองรองเท้า trail ถ้ามีแล้ว'},
+    {d:'อาทิตย์',date:'26 เม.ย.',time:'เช้า',type:'long',title:'Long Run',km:10,pace:'8:00–9:00',hr:'≤150',dur:'~90 min',desc:'Long run แรก วิ่งช้าๆ ดื่มน้ำทุก 20 นาที ถ้าเหนื่อยเดินได้เลย เน้น time on feet'},
   ]},
+  // W2: จ 27 อ 28 พ 29 พฤ 30 ส 2พ.ค. อา 3พ.ค.
   {w:2,phase:'BASE',km:28,days:[
-    {d:'จันทร์',date:'30 เม.ย.',time:'18:30',type:'easy',title:'Easy Run',km:6,pace:'7:45–8:30',hr:'≤145',dur:'~50 min',desc:'เพิ่มระยะเป็น 6 km ยังคง HR ≤145 bpm เป็นหลัก'},
-    {d:'อังคาร',date:'1 พ.ค.',time:'18:30',type:'rest',title:'Rest + Yoga',km:0,pace:'—',hr:'—',dur:'20 min',desc:'Yoga หรือยืดเหยียด เน้น hip opener และ IT band'},
-    {d:'พุธ',date:'2 พ.ค.',time:'18:30',type:'tempo',title:'Hill Repeats (บันได)',km:5,pace:'Mix',hr:'≤160',dur:'~50 min',desc:'Warm up 1 km → บันได 6×ขึ้น-ลง พัก 1 นาที → Cool down 1 km เริ่มฝึกขา trail'},
-    {d:'พฤหัส',date:'3 พ.ค.',time:'18:30',type:'easy',title:'Easy Run',km:5,pace:'8:00–8:30',hr:'≤145',dur:'~42 min',desc:'Easy recovery run หลัง hill เมื่อวาน วิ่งช้าๆ ฟัง body'},
-    {d:'ศุกร์',date:'4 พ.ค.',time:'—',type:'rest',title:'Rest Day',km:0,pace:'—',hr:'—',dur:'—',desc:'พัก เตรียมอาหารสำหรับ long run พรุ่งนี้'},
-    {d:'เสาร์',date:'5 พ.ค.',time:'เย็น',type:'easy',title:'Medium Run + Hills',km:10,pace:'7:30–8:30',hr:'≤150',dur:'~80 min',desc:'10 km รวม 4×200m ขึ้นเนิน/บันได'},
-    {d:'อาทิตย์',date:'6 พ.ค.',time:'เช้า',type:'long',title:'Long Run',km:14,pace:'8:00–9:00',hr:'≤152',dur:'~2 ชม.',desc:'Long run 14 km ดื่มน้ำ + เติม gel ที่ km 7 ทดสอบ gear และรองเท้า trail'},
+    {d:'จันทร์',date:'27 เม.ย.',time:'18:30',type:'easy',title:'Easy Run',km:5,pace:'8:00–8:30',hr:'≤145',dur:'~42 min',desc:'Easy run 5 km รักษา HR ≤145 ตลอด'},
+    {d:'อังคาร',date:'28 เม.ย.',time:'18:30',type:'strength',title:'Strength Core',km:0,pace:'—',hr:'—',dur:'30 min',desc:'Squat / Lunge / Plank / Glute bridge ท่าละ 3×15 เน้น lower body และ core สำหรับ trail'},
+    {d:'พุธ',date:'29 เม.ย.',time:'18:30',type:'tempo',title:'Hill Repeats (บันได)',km:5,pace:'Mix',hr:'≤160',dur:'~50 min',desc:'Warm up 1 km → บันได/เนิน 6×ขึ้น-ลง พัก 1 นาที → Cool down 1 km เริ่มฝึกขา trail'},
+    {d:'พฤหัส',date:'30 เม.ย.',time:'18:30',type:'easy',title:'Easy Recovery',km:5,pace:'8:30',hr:'≤143',dur:'~43 min',desc:'Easy recovery หลัง hill เมื่อวาน วิ่งช้าๆ ฟัง body'},
+    {d:'เสาร์',date:'2 พ.ค.',time:'เย็น',type:'easy',title:'Medium Run + Hills',km:8,pace:'7:30–8:30',hr:'≤148',dur:'~65 min',desc:'8 km รวม 4×200m ขึ้นเนิน/บันได'},
+    {d:'อาทิตย์',date:'3 พ.ค.',time:'เช้า',type:'long',title:'Long Run',km:12,pace:'8:00–9:00',hr:'≤150',dur:'~1:45 ชม.',desc:'Long run 12 km ดื่มน้ำ + ลองเติม gel ที่ km 6 ทดสอบ gear'},
   ]},
-  {w:3,phase:'BASE 🔄',km:22,days:[
-    {d:'จันทร์',date:'7 พ.ค.',time:'18:30',type:'easy',title:'Easy Run',km:5,pace:'8:00–8:30',hr:'≤143',dur:'~42 min',desc:'Recovery week — ลด volume วิ่งเบาๆ ให้ร่างกายซ่อมแซม'},
-    {d:'อังคาร',date:'8 พ.ค.',time:'18:30',type:'strength',title:'Strength',km:0,pace:'—',hr:'—',dur:'25 min',desc:'Strength เบาๆ Squat / Calf raise / Balance ท่าละ 2×12'},
-    {d:'พุธ',date:'9 พ.ค.',time:'18:30',type:'easy',title:'Easy Run',km:5,pace:'8:00–8:30',hr:'≤143',dur:'~42 min',desc:'Easy run ราบ HR ต่ำ'},
-    {d:'พฤหัส',date:'10 พ.ค.',time:'18:30',type:'rest',title:'Rest',km:0,pace:'—',hr:'—',dur:'—',desc:'พักเต็มๆ หรือเดิน 20 นาที'},
-    {d:'ศุกร์',date:'11 พ.ค.',time:'—',type:'rest',title:'Rest Day',km:0,pace:'—',hr:'—',dur:'—',desc:'พักก่อน weekend'},
-    {d:'เสาร์',date:'12 พ.ค.',time:'เย็น',type:'easy',title:'Easy Medium',km:8,pace:'8:00–8:30',hr:'≤148',dur:'~65 min',desc:'วิ่ง 8 km เบาๆ Recovery week'},
-    {d:'อาทิตย์',date:'13 พ.ค.',time:'เช้า',type:'long',title:'Easy Long Run',km:10,pace:'8:30–9:00',hr:'≤148',dur:'~90 min',desc:'ลด long run เหลือ 10 km ช้าๆ สบาย ประเมิน body หลัง 3 สัปดาห์'},
+  // W3: จ 4 อ 5 พ 6 พฤ 7 ส 9 อา 10 พ.ค.
+  {w:3,phase:'BASE',km:32,days:[
+    {d:'จันทร์',date:'4 พ.ค.',time:'18:30',type:'easy',title:'Easy Run',km:6,pace:'7:45–8:30',hr:'≤145',dur:'~50 min',desc:'เพิ่มระยะเป็น 6 km ยังคง HR ≤145 bpm เป็นหลัก'},
+    {d:'อังคาร',date:'5 พ.ค.',time:'18:30',type:'strength',title:'Strength',km:0,pace:'—',hr:'—',dur:'30 min',desc:'Strength เบาๆ Squat / Calf raise / Single-leg balance ท่าละ 2×15'},
+    {d:'พุธ',date:'6 พ.ค.',time:'18:30',type:'easy',title:'Easy Run',km:6,pace:'8:00',hr:'≤145',dur:'~48 min',desc:'Easy run ราบ HR ต่ำ'},
+    {d:'พฤหัส',date:'7 พ.ค.',time:'18:30',type:'tempo',title:'Tempo Light',km:6,pace:'7:00–7:30',hr:'≤158',dur:'~45 min',desc:'Warm up 1 km → Tempo 4 km → Cool down 1 km'},
+    {d:'เสาร์',date:'9 พ.ค.',time:'เย็น',type:'easy',title:'Medium Run',km:8,pace:'8:00–8:30',hr:'≤148',dur:'~65 min',desc:'8 km เบาๆ รักษา form ที่ดี'},
+    {d:'อาทิตย์',date:'10 พ.ค.',time:'เช้า',type:'long',title:'Long Run',km:14,pace:'8:00–9:00',hr:'≤152',dur:'~2 ชม.',desc:'Long run 14 km ดื่มน้ำ + เติม gel ที่ km 7 ทดสอบ gear และรองเท้า trail'},
   ]},
-  {w:4,phase:'BUILD 1',km:32,days:[
-    {d:'จันทร์',date:'14 พ.ค.',time:'18:30',type:'easy',title:'Easy Run',km:6,pace:'7:30–8:00',hr:'≤148',dur:'~48 min',desc:'เข้าสู่ BUILD phase ความเข้มข้นเพิ่มขึ้น'},
-    {d:'อังคาร',date:'15 พ.ค.',time:'18:30',type:'tempo',title:'Tempo Run',km:6,pace:'6:30–7:00',hr:'≤165',dur:'~42 min',desc:'Warm up 1 km → Tempo 4 km → Cool down 1 km เพิ่ม lactate threshold'},
-    {d:'พุธ',date:'16 พ.ค.',time:'18:30',type:'easy',title:'Easy + Drills',km:5,pace:'8:00',hr:'≤145',dur:'~45 min',desc:'Easy 4 km + drills: high knees / butt kick / A-skip'},
-    {d:'พฤหัส',date:'17 พ.ค.',time:'18:30',type:'strength',title:'Strength Heavy',km:0,pace:'—',hr:'—',dur:'35 min',desc:'Squat 3×15 / Romanian Deadlift 3×12 / Box step-up 3×10/ข้าง'},
-    {d:'ศุกร์',date:'18 พ.ค.',time:'—',type:'rest',title:'Rest Day',km:0,pace:'—',hr:'—',dur:'—',desc:'พักก่อน back-to-back weekend'},
-    {d:'เสาร์',date:'19 พ.ค.',time:'เย็น',type:'trail',title:'Trail/Hill Sim',km:12,pace:'Mix',hr:'≤158',dur:'~1:45 ชม.',desc:'หาเส้นทางที่มี elevation บันไดสนาม / สวนสาธารณะ hill repeat 8×'},
-    {d:'อาทิตย์',date:'20 พ.ค.',time:'เช้า',type:'long',title:'Long Run',km:16,pace:'7:45–8:30',hr:'≤155',dur:'~2:10 ชม.',desc:'Long run 16 km ดื่มน้ำทุก 20 min เติม gel/อาหารที่ km 8'},
+  // W4: Recovery จ 11 อ 12 พ 13 พฤ 14 ส 16 อา 17 พ.ค.
+  {w:4,phase:'BASE 🔄',km:22,days:[
+    {d:'จันทร์',date:'11 พ.ค.',time:'18:30',type:'easy',title:'Easy Run',km:5,pace:'8:00–8:30',hr:'≤143',dur:'~42 min',desc:'Recovery week — ลด volume วิ่งเบาๆ ให้ร่างกายซ่อมแซม'},
+    {d:'อังคาร',date:'12 พ.ค.',time:'18:30',type:'rest',title:'Rest + Yoga',km:0,pace:'—',hr:'—',dur:'20 min',desc:'Yoga / ยืดเหยียด เน้น hip opener และ IT band'},
+    {d:'พุธ',date:'13 พ.ค.',time:'18:30',type:'easy',title:'Easy Run',km:5,pace:'8:00–8:30',hr:'≤143',dur:'~42 min',desc:'Easy run ราบ HR ต่ำ'},
+    {d:'พฤหัส',date:'14 พ.ค.',time:'18:30',type:'strength',title:'Strength Light',km:0,pace:'—',hr:'—',dur:'25 min',desc:'Strength เบาๆ ท่าละ 2×12'},
+    {d:'เสาร์',date:'16 พ.ค.',time:'เย็น',type:'easy',title:'Easy Medium',km:6,pace:'8:00–8:30',hr:'≤145',dur:'~48 min',desc:'6 km เบาๆ Recovery week'},
+    {d:'อาทิตย์',date:'17 พ.ค.',time:'เช้า',type:'long',title:'Easy Long Run',km:10,pace:'8:30–9:00',hr:'≤148',dur:'~90 min',desc:'ลด long run เหลือ 10 km ช้าๆ ประเมิน body หลัง 4 สัปดาห์แรก'},
   ]},
-  {w:5,phase:'BUILD 1',km:36,days:[
-    {d:'จันทร์',date:'21 พ.ค.',time:'18:30',type:'easy',title:'Easy Run',km:7,pace:'7:30–8:00',hr:'≤148',dur:'~55 min',desc:'Easy run 7 km'},
-    {d:'อังคาร',date:'22 พ.ค.',time:'18:30',type:'tempo',title:'Interval Training',km:7,pace:'Mix',hr:'≤168',dur:'~55 min',desc:'Warm up 1.5 km → 5×800m (pace 6:00–6:15) → Cool down 1.5 km'},
-    {d:'พุธ',date:'23 พ.ค.',time:'18:30',type:'easy',title:'Easy Recovery',km:5,pace:'8:30',hr:'≤143',dur:'~43 min',desc:'วิ่งเบาๆ หลัง interval เมื่อวาน'},
-    {d:'พฤหัส',date:'24 พ.ค.',time:'18:30',type:'strength',title:'Strength + Balance',km:0,pace:'—',hr:'—',dur:'35 min',desc:'Single-leg squat / lateral lunge / step-down เพื่อความมั่นคงบนเทรล'},
-    {d:'ศุกร์',date:'25 พ.ค.',time:'—',type:'rest',title:'Rest Day',km:0,pace:'—',hr:'—',dur:'—',desc:'พัก'},
-    {d:'เสาร์',date:'26 พ.ค.',time:'เย็น',type:'trail',title:'Hill Climbing Sim',km:14,pace:'Mix',hr:'≤160',dur:'~2 ชม.',desc:'14 km รวม elevation 200–300m walk ขึ้นเขาก็โอเค'},
-    {d:'อาทิตย์',date:'27 พ.ค.',time:'เช้า',type:'long',title:'Long Run',km:18,pace:'7:45–8:30',hr:'≤155',dur:'~2:30 ชม.',desc:'Long run 18 km ทดสอบ gear ทั้งชุด รองเท้า vest น้ำ gel ทุกอย่าง'},
+  // W5: BUILD 1 จ 18 อ 19 พ 20 พฤ 21 ส 23 อา 24 พ.ค.
+  {w:5,phase:'BUILD 1',km:34,days:[
+    {d:'จันทร์',date:'18 พ.ค.',time:'18:30',type:'easy',title:'Easy Run',km:6,pace:'7:30–8:00',hr:'≤148',dur:'~48 min',desc:'เข้าสู่ BUILD phase ความเข้มข้นเพิ่มขึ้น'},
+    {d:'อังคาร',date:'19 พ.ค.',time:'18:30',type:'tempo',title:'Tempo Run',km:7,pace:'6:30–7:00',hr:'≤165',dur:'~50 min',desc:'Warm up 1 km → Tempo 5 km → Cool down 1 km เพิ่ม lactate threshold'},
+    {d:'พุธ',date:'20 พ.ค.',time:'18:30',type:'easy',title:'Easy + Drills',km:5,pace:'8:00',hr:'≤145',dur:'~45 min',desc:'Easy 4 km + drills: high knees / butt kick / A-skip'},
+    {d:'พฤหัส',date:'21 พ.ค.',time:'18:30',type:'strength',title:'Strength Heavy',km:0,pace:'—',hr:'—',dur:'35 min',desc:'Squat 3×15 / Romanian Deadlift 3×12 / Box step-up 3×10/ข้าง'},
+    {d:'เสาร์',date:'23 พ.ค.',time:'เย็น',type:'trail',title:'Trail/Hill Sim',km:12,pace:'Mix',hr:'≤158',dur:'~1:45 ชม.',desc:'หาเส้นทางที่มี elevation บันไดสนาม / สวนสาธารณะ hill repeat 8×'},
+    {d:'อาทิตย์',date:'24 พ.ค.',time:'เช้า',type:'long',title:'Long Run',km:16,pace:'7:45–8:30',hr:'≤155',dur:'~2:10 ชม.',desc:'Long run 16 km ดื่มน้ำทุก 20 min เติม gel/อาหารที่ km 8'},
   ]},
-  {w:6,phase:'BUILD 1 🔄',km:28,days:[
-    {d:'จันทร์',date:'28 พ.ค.',time:'18:30',type:'easy',title:'Easy Run',km:6,pace:'8:00',hr:'≤145',dur:'~48 min',desc:'Recovery week เบาลง'},
-    {d:'อังคาร',date:'29 พ.ค.',time:'18:30',type:'rest',title:'Rest',km:0,pace:'—',hr:'—',dur:'—',desc:'พัก'},
-    {d:'พุธ',date:'30 พ.ค.',time:'18:30',type:'easy',title:'Easy + Strides',km:6,pace:'7:45–8:00',hr:'≤148',dur:'~48 min',desc:'Easy 5 km + strides 6×80m'},
-    {d:'พฤหัส',date:'31 พ.ค.',time:'18:30',type:'strength',title:'Strength',km:0,pace:'—',hr:'—',dur:'25 min',desc:'Strength เบาๆ'},
-    {d:'ศุกร์',date:'1 มิ.ย.',time:'—',type:'rest',title:'Rest Day',km:0,pace:'—',hr:'—',dur:'—',desc:'พัก'},
-    {d:'เสาร์',date:'2 มิ.ย.',time:'เย็น',type:'easy',title:'Medium Run',km:10,pace:'7:45–8:30',hr:'≤150',dur:'~80 min',desc:'10 km เบาๆ'},
-    {d:'อาทิตย์',date:'3 มิ.ย.',time:'เช้า',type:'long',title:'Long Run',km:12,pace:'8:00–8:30',hr:'≤150',dur:'~1:40 ชม.',desc:'12 km เบาๆ recovery week'},
+  // W6: BUILD 1 จ 25 อ 26 พ 27 พฤ 28 ส 30 อา 31 พ.ค.
+  {w:6,phase:'BUILD 1',km:38,days:[
+    {d:'จันทร์',date:'25 พ.ค.',time:'18:30',type:'easy',title:'Easy Run',km:7,pace:'7:30–8:00',hr:'≤148',dur:'~55 min',desc:'Easy run 7 km'},
+    {d:'อังคาร',date:'26 พ.ค.',time:'18:30',type:'tempo',title:'Interval Training',km:7,pace:'Mix',hr:'≤168',dur:'~55 min',desc:'Warm up 1.5 km → 5×800m (pace 6:00–6:15) → Cool down 1.5 km'},
+    {d:'พุธ',date:'27 พ.ค.',time:'18:30',type:'easy',title:'Easy Recovery',km:5,pace:'8:30',hr:'≤143',dur:'~43 min',desc:'วิ่งเบาๆ หลัง interval เมื่อวาน'},
+    {d:'พฤหัส',date:'28 พ.ค.',time:'18:30',type:'strength',title:'Strength + Balance',km:0,pace:'—',hr:'—',dur:'35 min',desc:'Single-leg squat / lateral lunge / step-down เพื่อความมั่นคงบนเทรล'},
+    {d:'เสาร์',date:'30 พ.ค.',time:'เย็น',type:'trail',title:'Hill Climbing Sim',km:14,pace:'Mix',hr:'≤160',dur:'~2 ชม.',desc:'14 km รวม elevation 200–300m walk ขึ้นเขาก็โอเค'},
+    {d:'อาทิตย์',date:'31 พ.ค.',time:'เช้า',type:'long',title:'Long Run',km:18,pace:'7:45–8:30',hr:'≤155',dur:'~2:30 ชม.',desc:'Long run 18 km ทดสอบ gear ทั้งชุด รองเท้า vest น้ำ gel ทุกอย่าง'},
   ]},
-  {w:7,phase:'BUILD 2 🏔️',km:40,days:[
-    {d:'จันทร์',date:'4 มิ.ย.',time:'18:30',type:'easy',title:'Easy Run',km:7,pace:'7:30',hr:'≤148',dur:'~52 min',desc:'เข้าสู่ BUILD 2 เน้น trail specific'},
-    {d:'อังคาร',date:'5 มิ.ย.',time:'18:30',type:'tempo',title:'Tempo',km:7,pace:'6:30–7:00',hr:'≤165',dur:'~50 min',desc:'Tempo 5 km ใน 7 km total'},
-    {d:'พุธ',date:'6 มิ.ย.',time:'18:30',type:'easy',title:'Easy + Hills',km:6,pace:'Mix',hr:'≤155',dur:'~55 min',desc:'Easy + บันได/เนิน 6 ชุด'},
-    {d:'พฤหัส',date:'7 มิ.ย.',time:'18:30',type:'strength',title:'Strength',km:0,pace:'—',hr:'—',dur:'35 min',desc:'Heavy strength'},
-    {d:'ศุกร์',date:'8 มิ.ย.',time:'—',type:'rest',title:'Rest Day',km:0,pace:'—',hr:'—',dur:'—',desc:'พัก เตรียมสำหรับ trail weekend'},
-    {d:'เสาร์',date:'9 มิ.ย.',time:'เย็น',type:'trail',title:'⭐ Trail จริง!',km:10,pace:'Mix',hr:'≤162',dur:'~2 ชม.',desc:'⭐ ซ้อมบนเขาจริงครั้งแรก! walk-run ขึ้นเขา ลงระวังเข่า ไม่ต้องเร็ว'},
-    {d:'อาทิตย์',date:'10 มิ.ย.',time:'เช้า',type:'long',title:'Long Run Road',km:18,pace:'7:45–8:30',hr:'≤155',dur:'~2:25 ชม.',desc:'Long run ถนน ขาที่ยังเมื่อยจาก trail เมื่อวาน เน้น time on feet'},
+  // W7: BUILD 1 Recovery จ 1 อ 2 พ 3 พฤ 4 ส 6 อา 7 มิ.ย.
+  {w:7,phase:'BUILD 1 🔄',km:26,days:[
+    {d:'จันทร์',date:'1 มิ.ย.',time:'18:30',type:'easy',title:'Easy Run',km:6,pace:'8:00',hr:'≤145',dur:'~48 min',desc:'Recovery week เบาลง'},
+    {d:'อังคาร',date:'2 มิ.ย.',time:'18:30',type:'rest',title:'Rest',km:0,pace:'—',hr:'—',dur:'—',desc:'พัก ยืดเหยียด'},
+    {d:'พุธ',date:'3 มิ.ย.',time:'18:30',type:'easy',title:'Easy + Strides',km:6,pace:'7:45–8:00',hr:'≤148',dur:'~48 min',desc:'Easy 5 km + strides 6×80m'},
+    {d:'พฤหัส',date:'4 มิ.ย.',time:'18:30',type:'strength',title:'Strength',km:0,pace:'—',hr:'—',dur:'25 min',desc:'Strength เบาๆ'},
+    {d:'เสาร์',date:'6 มิ.ย.',time:'เย็น',type:'easy',title:'Medium Run',km:8,pace:'7:45–8:30',hr:'≤150',dur:'~65 min',desc:'8 km เบาๆ'},
+    {d:'อาทิตย์',date:'7 มิ.ย.',time:'เช้า',type:'long',title:'Long Run',km:12,pace:'8:00–8:30',hr:'≤150',dur:'~1:40 ชม.',desc:'12 km เบาๆ recovery week'},
   ]},
-  {w:8,phase:'BUILD 2 🏔️',km:44,days:[
-    {d:'จันทร์',date:'11 มิ.ย.',time:'18:30',type:'easy',title:'Easy Run',km:7,pace:'7:30',hr:'≤148',dur:'~52 min',desc:'Easy run'},
-    {d:'อังคาร',date:'12 มิ.ย.',time:'18:30',type:'tempo',title:'Interval',km:8,pace:'Mix',hr:'≤168',dur:'~60 min',desc:'6×800m interval'},
-    {d:'พุธ',date:'13 มิ.ย.',time:'18:30',type:'easy',title:'Easy Recovery',km:6,pace:'8:00',hr:'≤145',dur:'~48 min',desc:'Recovery run'},
-    {d:'พฤหัส',date:'14 มิ.ย.',time:'18:30',type:'strength',title:'Strength',km:0,pace:'—',hr:'—',dur:'35 min',desc:'Heavy strength'},
-    {d:'ศุกร์',date:'15 มิ.ย.',time:'—',type:'rest',title:'Rest Day',km:0,pace:'—',hr:'—',dur:'—',desc:'พัก'},
-    {d:'เสาร์',date:'16 มิ.ย.',time:'เย็น',type:'trail',title:'⭐ Trail Run 14km',km:14,pace:'Mix',hr:'≤162',dur:'~2:30 ชม.',desc:'⭐ Trail 14 km ฝึก walk power ขึ้นชัน วิ่งลงให้มั่นใจ ฝึกกินน้ำ-gel บนเส้นทาง'},
-    {d:'อาทิตย์',date:'17 มิ.ย.',time:'เช้า',type:'long',title:'Back-to-Back Long',km:20,pace:'7:45–8:30',hr:'≤158',dur:'~2:45 ชม.',desc:'Back-to-back long 20 km ซ้อมขาล้า เหมือนช่วง km 20–42 ของ race day'},
+  // W8: BUILD 2 🏔️ จ 8 อ 9 พ 10 พฤ 11 ส 13 อา 14 มิ.ย.
+  {w:8,phase:'BUILD 2 🏔️',km:40,days:[
+    {d:'จันทร์',date:'8 มิ.ย.',time:'18:30',type:'easy',title:'Easy Run',km:7,pace:'7:30',hr:'≤148',dur:'~52 min',desc:'เข้าสู่ BUILD 2 เน้น trail specific'},
+    {d:'อังคาร',date:'9 มิ.ย.',time:'18:30',type:'tempo',title:'Tempo',km:7,pace:'6:30–7:00',hr:'≤165',dur:'~50 min',desc:'Tempo 5 km ใน 7 km total'},
+    {d:'พุธ',date:'10 มิ.ย.',time:'18:30',type:'easy',title:'Easy + Hills',km:6,pace:'Mix',hr:'≤155',dur:'~55 min',desc:'Easy + บันได/เนิน 6 ชุด'},
+    {d:'พฤหัส',date:'11 มิ.ย.',time:'18:30',type:'strength',title:'Strength',km:0,pace:'—',hr:'—',dur:'35 min',desc:'Heavy strength'},
+    {d:'เสาร์',date:'13 มิ.ย.',time:'เย็น',type:'trail',title:'⭐ Trail จริง!',km:10,pace:'Mix',hr:'≤162',dur:'~2 ชม.',desc:'⭐ ซ้อมบนเขาจริงครั้งแรก! walk-run ขึ้นเขา ลงระวังเข่า ไม่ต้องเร็ว'},
+    {d:'อาทิตย์',date:'14 มิ.ย.',time:'เช้า',type:'long',title:'Long Run Road',km:18,pace:'7:45–8:30',hr:'≤155',dur:'~2:25 ชม.',desc:'Long run ถนน ขาที่ยังเมื่อยจาก trail เมื่อวาน เน้น time on feet'},
   ]},
-  {w:9,phase:'BUILD 2 🔄',km:35,days:[
-    {d:'จันทร์',date:'18 มิ.ย.',time:'18:30',type:'easy',title:'Easy Run',km:6,pace:'8:00',hr:'≤145',dur:'~48 min',desc:'Recovery week'},
-    {d:'อังคาร',date:'19 มิ.ย.',time:'18:30',type:'rest',title:'Rest',km:0,pace:'—',hr:'—',dur:'—',desc:'พัก'},
-    {d:'พุธ',date:'20 มิ.ย.',time:'18:30',type:'tempo',title:'Tempo Light',km:7,pace:'7:00',hr:'≤158',dur:'~50 min',desc:'Tempo เบา'},
-    {d:'พฤหัส',date:'21 มิ.ย.',time:'18:30',type:'easy',title:'Easy Run',km:6,pace:'8:00',hr:'≤145',dur:'~48 min',desc:'Easy run'},
-    {d:'ศุกร์',date:'22 มิ.ย.',time:'—',type:'rest',title:'Rest Day',km:0,pace:'—',hr:'—',dur:'—',desc:'พัก'},
-    {d:'เสาร์',date:'23 มิ.ย.',time:'เย็น',type:'trail',title:'Trail Easy',km:10,pace:'Mix',hr:'≤155',dur:'~1:45 ชม.',desc:'Trail 10 km เบาๆ'},
-    {d:'อาทิตย์',date:'24 มิ.ย.',time:'เช้า',type:'long',title:'Long Run',km:14,pace:'8:00–8:30',hr:'≤152',dur:'~1:55 ชม.',desc:'Long run เบา recovery week'},
+  // W9: BUILD 2 🏔️ จ 15 อ 16 พ 17 พฤ 18 ส 20 อา 21 มิ.ย.
+  {w:9,phase:'BUILD 2 🏔️',km:44,days:[
+    {d:'จันทร์',date:'15 มิ.ย.',time:'18:30',type:'easy',title:'Easy Run',km:7,pace:'7:30',hr:'≤148',dur:'~52 min',desc:'Easy run'},
+    {d:'อังคาร',date:'16 มิ.ย.',time:'18:30',type:'tempo',title:'Interval',km:8,pace:'Mix',hr:'≤168',dur:'~60 min',desc:'6×800m interval'},
+    {d:'พุธ',date:'17 มิ.ย.',time:'18:30',type:'easy',title:'Easy Recovery',km:6,pace:'8:00',hr:'≤145',dur:'~48 min',desc:'Recovery run'},
+    {d:'พฤหัส',date:'18 มิ.ย.',time:'18:30',type:'strength',title:'Strength',km:0,pace:'—',hr:'—',dur:'35 min',desc:'Heavy strength'},
+    {d:'เสาร์',date:'20 มิ.ย.',time:'เย็น',type:'trail',title:'⭐ Trail Run 14km',km:14,pace:'Mix',hr:'≤162',dur:'~2:30 ชม.',desc:'⭐ Trail 14 km ฝึก walk power ขึ้นชัน วิ่งลงให้มั่นใจ ฝึกกินน้ำ-gel บนเส้นทาง'},
+    {d:'อาทิตย์',date:'21 มิ.ย.',time:'เช้า',type:'long',title:'Back-to-Back Long',km:20,pace:'7:45–8:30',hr:'≤158',dur:'~2:45 ชม.',desc:'Back-to-back long 20 km ซ้อมขาล้า เหมือนช่วง km 20–42 ของ race day'},
   ]},
-  {w:10,phase:'PEAK 🔥',km:48,days:[
-    {d:'จันทร์',date:'25 มิ.ย.',time:'18:30',type:'easy',title:'Easy Run',km:8,pace:'7:30',hr:'≤150',dur:'~60 min',desc:'เข้าสู่ PEAK phase สัปดาห์หนักมาก'},
-    {d:'อังคาร',date:'26 มิ.ย.',time:'18:30',type:'tempo',title:'Tempo + Hills',km:8,pace:'Mix',hr:'≤168',dur:'~60 min',desc:'Tempo 5 km + hill repeats 4×'},
-    {d:'พุธ',date:'27 มิ.ย.',time:'18:30',type:'easy',title:'Easy Run',km:6,pace:'8:00',hr:'≤145',dur:'~48 min',desc:'Recovery easy'},
-    {d:'พฤหัส',date:'28 มิ.ย.',time:'18:30',type:'strength',title:'Strength Final',km:0,pace:'—',hr:'—',dur:'35 min',desc:'Strength สุดท้ายก่อน taper เน้น legs'},
-    {d:'ศุกร์',date:'29 มิ.ย.',time:'—',type:'rest',title:'Rest Day',km:0,pace:'—',hr:'—',dur:'—',desc:'พัก'},
-    {d:'เสาร์',date:'30 มิ.ย.',time:'เย็น',type:'trail',title:'⭐ Trail Hard 16km',km:16,pace:'Mix',hr:'≤165',dur:'~3 ชม.',desc:'⭐ Trail 16 km เน้น elevation 600–800m ฝึก fueling ทุก 45 นาที'},
-    {d:'อาทิตย์',date:'1 ก.ค.',time:'เช้า',type:'long',title:'Long Run Peak',km:22,pace:'7:30–8:00',hr:'≤160',dur:'~3 ชม.',desc:'Long run สูงสุด 22 km back-to-back กับ trail เมื่อวาน'},
+  // W10: BUILD 2 Recovery จ 22 อ 23 พ 24 พฤ 25 ส 27 อา 28 มิ.ย.
+  {w:10,phase:'BUILD 2 🔄',km:34,days:[
+    {d:'จันทร์',date:'22 มิ.ย.',time:'18:30',type:'easy',title:'Easy Run',km:6,pace:'8:00',hr:'≤145',dur:'~48 min',desc:'Recovery week'},
+    {d:'อังคาร',date:'23 มิ.ย.',time:'18:30',type:'rest',title:'Rest',km:0,pace:'—',hr:'—',dur:'—',desc:'พัก'},
+    {d:'พุธ',date:'24 มิ.ย.',time:'18:30',type:'tempo',title:'Tempo Light',km:7,pace:'7:00',hr:'≤158',dur:'~50 min',desc:'Tempo เบา'},
+    {d:'พฤหัส',date:'25 มิ.ย.',time:'18:30',type:'easy',title:'Easy Run',km:6,pace:'8:00',hr:'≤145',dur:'~48 min',desc:'Easy run'},
+    {d:'เสาร์',date:'27 มิ.ย.',time:'เย็น',type:'trail',title:'Trail Easy',km:10,pace:'Mix',hr:'≤155',dur:'~1:45 ชม.',desc:'Trail 10 km เบาๆ'},
+    {d:'อาทิตย์',date:'28 มิ.ย.',time:'เช้า',type:'long',title:'Long Run',km:14,pace:'8:00–8:30',hr:'≤152',dur:'~1:55 ชม.',desc:'Long run เบา recovery week'},
   ]},
-  {w:11,phase:'PEAK 🔥',km:50,days:[
-    {d:'จันทร์',date:'2 ก.ค.',time:'18:30',type:'easy',title:'Easy Run',km:8,pace:'7:30',hr:'≤150',dur:'~60 min',desc:'Peak week สูงสุด 50 km'},
-    {d:'อังคาร',date:'3 ก.ค.',time:'18:30',type:'tempo',title:'Race Pace Tempo',km:8,pace:'7:00–7:30',hr:'≤162',dur:'~58 min',desc:'ฝึก race pace สำหรับส่วนราบ'},
-    {d:'พุธ',date:'4 ก.ค.',time:'18:30',type:'easy',title:'Easy Recovery',km:6,pace:'8:30',hr:'≤143',dur:'~51 min',desc:'Easy recovery'},
-    {d:'พฤหัส',date:'5 ก.ค.',time:'18:30',type:'easy',title:'Easy + Strides',km:6,pace:'7:45',hr:'≤150',dur:'~48 min',desc:'Easy + 8×strides สั้น'},
-    {d:'ศุกร์',date:'6 ก.ค.',time:'—',type:'rest',title:'Rest Day',km:0,pace:'—',hr:'—',dur:'—',desc:'พักก่อง biggest weekend'},
-    {d:'เสาร์',date:'7 ก.ค.',time:'เย็น',type:'trail',title:'⭐ Race Sim Trail',km:18,pace:'Mix',hr:'≤165',dur:'~3:30 ชม.',desc:'⭐ Race simulation บน trail 18 km ใส่ gear ครบ กิน/ดื่มเหมือน race day จริง'},
-    {d:'อาทิตย์',date:'8 ก.ค.',time:'เช้า',type:'long',title:'Back-to-Back Final',km:20,pace:'7:30–8:00',hr:'≤160',dur:'~2:45 ชม.',desc:'สัปดาห์หนักที่สุดเสร็จแล้ว! หลังจากนี้คือ taper'},
+  // W11: PEAK จ 29 มิ.ย. อ 30 มิ.ย. พ 1 พฤ 2 ส 4 อา 5 ก.ค.
+  {w:11,phase:'PEAK 🔥',km:48,days:[
+    {d:'จันทร์',date:'29 มิ.ย.',time:'18:30',type:'easy',title:'Easy Run',km:8,pace:'7:30',hr:'≤150',dur:'~60 min',desc:'เข้าสู่ PEAK phase สัปดาห์หนักมาก'},
+    {d:'อังคาร',date:'30 มิ.ย.',time:'18:30',type:'tempo',title:'Tempo + Hills',km:8,pace:'Mix',hr:'≤168',dur:'~60 min',desc:'Tempo 5 km + hill repeats 4×'},
+    {d:'พุธ',date:'1 ก.ค.',time:'18:30',type:'easy',title:'Easy Run',km:6,pace:'8:00',hr:'≤145',dur:'~48 min',desc:'Recovery easy'},
+    {d:'พฤหัส',date:'2 ก.ค.',time:'18:30',type:'strength',title:'Strength Final',km:0,pace:'—',hr:'—',dur:'35 min',desc:'Strength สุดท้ายก่อน taper เน้น legs'},
+    {d:'เสาร์',date:'4 ก.ค.',time:'เย็น',type:'trail',title:'⭐ Trail Hard 16km',km:16,pace:'Mix',hr:'≤165',dur:'~3 ชม.',desc:'⭐ Trail 16 km เน้น elevation 600–800m ฝึก fueling ทุก 45 นาที'},
+    {d:'อาทิตย์',date:'5 ก.ค.',time:'เช้า',type:'long',title:'Long Run Peak',km:22,pace:'7:30–8:00',hr:'≤160',dur:'~3 ชม.',desc:'Long run สูงสุด 22 km back-to-back กับ trail เมื่อวาน'},
   ]},
-  {w:12,phase:'TAPER',km:32,days:[
-    {d:'จันทร์',date:'9 ก.ค.',time:'18:30',type:'easy',title:'Easy Run',km:7,pace:'7:30',hr:'≤148',dur:'~52 min',desc:'เริ่ม TAPER ลด volume รักษา intensity'},
-    {d:'อังคาร',date:'10 ก.ค.',time:'18:30',type:'rest',title:'Rest',km:0,pace:'—',hr:'—',dur:'—',desc:'พัก'},
-    {d:'พุธ',date:'11 ก.ค.',time:'18:30',type:'tempo',title:'Sharpening Tempo',km:7,pace:'6:45–7:00',hr:'≤162',dur:'~50 min',desc:'Tempo คม 4 km ใน 7 km total'},
-    {d:'พฤหัส',date:'12 ก.ค.',time:'18:30',type:'easy',title:'Easy Run',km:5,pace:'7:45',hr:'≤148',dur:'~39 min',desc:'Easy run สั้น'},
-    {d:'ศุกร์',date:'13 ก.ค.',time:'—',type:'rest',title:'Rest Day',km:0,pace:'—',hr:'—',dur:'—',desc:'พัก'},
-    {d:'เสาร์',date:'14 ก.ค.',time:'เย็น',type:'trail',title:'Short Trail',km:8,pace:'Mix',hr:'≤155',dur:'~1:30 ชม.',desc:'Trail สั้น 8 km เอาขาจำ feel trail ไว้'},
-    {d:'อาทิตย์',date:'15 ก.ค.',time:'เช้า',type:'long',title:'Medium Long',km:14,pace:'7:30–8:00',hr:'≤152',dur:'~1:50 ชม.',desc:'Long run สุดท้ายก่อน race week'},
+  // W12: PEAK จ 6 อ 7 พ 8 พฤ 9 ส 11 อา 12 ก.ค.
+  {w:12,phase:'PEAK 🔥',km:50,days:[
+    {d:'จันทร์',date:'6 ก.ค.',time:'18:30',type:'easy',title:'Easy Run',km:8,pace:'7:30',hr:'≤150',dur:'~60 min',desc:'Peak week สูงสุด 50 km'},
+    {d:'อังคาร',date:'7 ก.ค.',time:'18:30',type:'tempo',title:'Race Pace Tempo',km:8,pace:'7:00–7:30',hr:'≤162',dur:'~58 min',desc:'ฝึก race pace สำหรับส่วนราบ'},
+    {d:'พุธ',date:'8 ก.ค.',time:'18:30',type:'easy',title:'Easy Recovery',km:6,pace:'8:30',hr:'≤143',dur:'~51 min',desc:'Easy recovery'},
+    {d:'พฤหัส',date:'9 ก.ค.',time:'18:30',type:'easy',title:'Easy + Strides',km:6,pace:'7:45',hr:'≤150',dur:'~48 min',desc:'Easy + 8×strides สั้น'},
+    {d:'เสาร์',date:'11 ก.ค.',time:'เย็น',type:'trail',title:'⭐ Race Sim Trail',km:18,pace:'Mix',hr:'≤165',dur:'~3:30 ชม.',desc:'⭐ Race simulation บน trail 18 km ใส่ gear ครบ กิน/ดื่มเหมือน race day จริง'},
+    {d:'อาทิตย์',date:'12 ก.ค.',time:'เช้า',type:'long',title:'Back-to-Back Final',km:20,pace:'7:30–8:00',hr:'≤160',dur:'~2:45 ชม.',desc:'สัปดาห์หนักที่สุดเสร็จแล้ว! หลังจากนี้คือ taper'},
   ]},
-  {w:13,phase:'RACE WEEK 🏁',km:18,days:[
-    {d:'จันทร์',date:'16 ก.ค.',time:'18:30',type:'easy',title:'Easy Shakeout',km:5,pace:'7:30',hr:'≤145',dur:'~38 min',desc:'วิ่งเบาๆ ขาสบาย'},
-    {d:'อังคาร',date:'17 ก.ค.',time:'18:30',type:'easy',title:'Easy + Strides',km:5,pace:'7:30',hr:'≤145',dur:'~38 min',desc:'Easy + 4×strides เอาขาให้ตื่น'},
-    {d:'พุธ',date:'18 ก.ค.',time:'18:30',type:'easy',title:'Easy Jog',km:4,pace:'8:00',hr:'≤140',dur:'~32 min',desc:'Jog สบายๆ 4 km'},
-    {d:'พฤหัส',date:'19 ก.ค.',time:'18:30',type:'rest',title:'Rest',km:0,pace:'—',hr:'—',dur:'—',desc:'พัก เช็ค gear ทั้งหมด'},
-    {d:'ศุกร์',date:'20 ก.ค.',time:'—',type:'rest',title:'Travel Day 🚗',km:0,pace:'—',hr:'—',dur:'—',desc:'เดินทางไปนครสวรรค์ เช็ค gear เข้านอนเร็ว'},
-    {d:'เสาร์',date:'21 ก.ค.',time:'เช้า',type:'easy',title:'Pre-race Shakeout',km:4,pace:'—',hr:'—',dur:'20 min',desc:'Shakeout สั้น 4 km รับ BIB เตรียม carb load'},
-    {d:'อาทิตย์',date:'22 ก.ค.',time:'—',type:'rest',title:'Rest Final 💤',km:0,pace:'—',hr:'—',dur:'—',desc:'พักสุดท้าย นอน 21:00 ตื่น 02:00 กิน pre-race meal'},
+  // W13: TAPER จ 13 อ 14 พ 15 พฤ 16 ส 18 อา 19 ก.ค.
+  {w:13,phase:'TAPER',km:30,days:[
+    {d:'จันทร์',date:'13 ก.ค.',time:'18:30',type:'easy',title:'Easy Run',km:7,pace:'7:30',hr:'≤148',dur:'~52 min',desc:'เริ่ม TAPER ลด volume รักษา intensity'},
+    {d:'อังคาร',date:'14 ก.ค.',time:'18:30',type:'rest',title:'Rest',km:0,pace:'—',hr:'—',dur:'—',desc:'พัก'},
+    {d:'พุธ',date:'15 ก.ค.',time:'18:30',type:'tempo',title:'Sharpening Tempo',km:7,pace:'6:45–7:00',hr:'≤162',dur:'~50 min',desc:'Tempo คม 4 km ใน 7 km total'},
+    {d:'พฤหัส',date:'16 ก.ค.',time:'18:30',type:'easy',title:'Easy Run',km:5,pace:'7:45',hr:'≤148',dur:'~39 min',desc:'Easy run สั้น'},
+    {d:'เสาร์',date:'18 ก.ค.',time:'เย็น',type:'trail',title:'Short Trail',km:8,pace:'Mix',hr:'≤155',dur:'~1:30 ชม.',desc:'Trail สั้น 8 km เอาขาจำ feel trail ไว้'},
+    {d:'อาทิตย์',date:'19 ก.ค.',time:'เช้า',type:'long',title:'Medium Long',km:12,pace:'7:30–8:00',hr:'≤152',dur:'~1:40 ชม.',desc:'Long run สุดท้ายก่อน race week'},
   ]},
 ];
 
@@ -545,9 +542,12 @@ function go(id){
 function renderWeekGrid(){
   const el = document.getElementById('wgrid');
   const w1 = PLAN[0].days;
-  el.innerHTML = w1.map((d,i)=>{
-    const num = 23+i;
-    const isToday = num===23;
+  // W1: พฤ=23 เม.ย., ส=25 เม.ย., อา=26 เม.ย.
+  const dateNums = {'พฤหัส':23,'เสาร์':25,'อาทิตย์':26};
+  const todayNum = 23;
+  el.innerHTML = w1.map((d)=>{
+    const num = dateNums[d.d] || '—';
+    const isToday = num===todayNum;
     const hasLog = logs.some(l=>l.date===d.date);
     return `<div class="wday type-${d.type} ${isToday?'today-cell':''} ${hasLog?'logged-cell':''}" onclick="go('plan')">
       <div class="wd-name">${d.d.slice(0,2)}</div>
