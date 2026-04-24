@@ -214,6 +214,8 @@ nav{background:var(--s1);border-bottom:1px solid var(--border);padding:0 16px;di
   .plan-day{grid-template-columns:70px 1fr auto;}
 }
 </style>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
 </head>
 <body>
 
@@ -507,14 +509,29 @@ const NUTRITION = {
     meals:[{t:'02:30',n:'Pre-race Meal',i:'ข้าวต้ม 2 ถ้วย + ไข่ 2 ฟอง + กล้วย + น้ำผึ้ง',tip:'กิน 2.5 ชม.ก่อน start',k:480},{t:'04:30',n:'Final Boost',i:'กล้วย 1 ลูก + energy gel 1 ซอง + น้ำ 300ml',tip:'30 นาทีก่อน start',k:200},{t:'A1 7.5km',n:'Aid A1',i:'น้ำ + Pocari + ผลไม้ + gel',tip:'',k:150},{t:'A2 12km',n:'Aid A2',i:'น้ำ + Pocari + ข้าวเหนียว/กล้วย',tip:'จุดสูงสุด กินก่อนลงเขา',k:200},{t:'A3 21km',n:'Aid A3',i:'น้ำ + อาหาร + เติม gel สำรอง',tip:'',k:250},{t:'A4 27.5km',n:'Aid A4',i:'น้ำ + อาหารจริง + soup',tip:'จุดสำคัญ เติมให้เต็ม',k:300}]},
 };
 
+// ═══════════ FIREBASE ═══════════
+const firebaseConfig = {
+  apiKey: "AIzaSyA-FxiTqq1I7paeME9Q_MwzpgNGHfEDTC8",
+  authDomain: "nst42-coach.firebaseapp.com",
+  projectId: "nst42-coach",
+  storageBucket: "nst42-coach.firebasestorage.app",
+  messagingSenderId: "869660703781",
+  appId: "1:869660703781:web:cf6b37a5a56d9d83bcd3cc"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+
 // ═══════════ STATE ═══════════
 let logs = [];
 let selWeek = 1;
 let nDay = 'run';
 
-function loadLogs(){try{logs=JSON.parse(localStorage.getItem('nst42v2')||'[]');}catch(e){logs=[];}}
-function saveLogs(){try{localStorage.setItem('nst42v2',JSON.stringify(logs));}catch(e){}}
-loadLogs();
+async function loadLogs(){
+  try{
+    const snap = await db.collection('logs').orderBy('id','desc').get();
+    logs = snap.docs.map(d => d.data());
+  }catch(e){ logs = []; }
+}
 
 // ═══════════ COUNTDOWN ═══════════
 function updateCountdown(){
@@ -575,7 +592,7 @@ function updateStats(){
 function toggleLog(){
   document.getElementById('log-form').classList.toggle('open');
 }
-function saveLog(){
+async function saveLog(){
   const dist = document.getElementById('f-dist').value;
   if(!dist){alert('กรอก distance ก่อนนะครับ');return;}
   const entry = {
@@ -589,7 +606,8 @@ function saveLog(){
     feel:document.getElementById('f-feel').value,
     note:document.getElementById('f-note').value
   };
-  logs.unshift(entry); saveLogs(); updateStats();
+  await db.collection('logs').doc(String(entry.id)).set(entry);
+  logs.unshift(entry); updateStats();
   document.getElementById('log-form').classList.remove('open');
   const btn = document.getElementById('log-btn');
   btn.textContent = '✓ บันทึกแล้ว'; btn.classList.add('logged');
@@ -675,10 +693,11 @@ function renderHist(){
       <button class="li-del" onclick="deleteLog(${l.id})">✕</button>
     </div>`).join('');
 }
-function deleteLog(id){
+async function deleteLog(id){
   if(!confirm('ลบ session นี้?')) return;
+  await db.collection('logs').doc(String(id)).delete();
   logs = logs.filter(l=>l.id!==id);
-  saveLogs(); updateStats(); renderHist(); renderWeekGrid();
+  updateStats(); renderHist(); renderWeekGrid();
 }
 
 // ═══════════ AI COACH ═══════════
@@ -719,11 +738,15 @@ async function sendChat(){
 }
 
 // ═══════════ INIT ═══════════
-updateCountdown();
-setInterval(updateCountdown, 60000);
-renderWeekGrid();
-updateStats();
-renderNutri();
+async function init(){
+  await loadLogs();
+  updateCountdown();
+  setInterval(updateCountdown, 60000);
+  renderWeekGrid();
+  updateStats();
+  renderNutri();
+}
+init();
 </script>
 </body>
 </html>
