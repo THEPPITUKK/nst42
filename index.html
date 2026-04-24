@@ -283,6 +283,20 @@ nav{background:var(--s1);border-bottom:1px solid var(--border);padding:0 16px;di
     <button class="log-btn" id="log-btn" onclick="toggleLog()">+ บันทึกผลซ้อม</button>
     <div class="log-form" id="log-form">
       <div class="fr2">
+        <div class="fg"><label>วันที่ซ้อม</label><input type="date" id="f-date"></div>
+        <div class="fg"><label>ประเภท</label>
+          <select id="f-type">
+            <option value="easy">Easy Run</option>
+            <option value="tempo">Tempo / Interval</option>
+            <option value="long">Long Run</option>
+            <option value="trail">Trail Run</option>
+            <option value="strength">Strength</option>
+            <option value="back">Back-to-Back</option>
+            <option value="rest">Rest / Recovery</option>
+          </select>
+        </div>
+      </div>
+      <div class="fr2">
         <div class="fg"><label>DISTANCE (km)</label><input type="number" id="f-dist" placeholder="5.0" step="0.1"></div>
         <div class="fg"><label>TIME (นาที)</label><input type="number" id="f-time" placeholder="45"></div>
       </div>
@@ -530,6 +544,7 @@ async function loadLogs(){
   try{
     const snap = await db.collection('logs').orderBy('id','desc').get();
     logs = snap.docs.map(d => d.data());
+    logs.sort((a,b) => (b.dateISO||'') > (a.dateISO||'') ? 1 : -1);
   }catch(e){ logs = []; }
 }
 
@@ -577,7 +592,8 @@ function renderWeekGrid(){
 // ═══════════ STATS ═══════════
 function updateStats(){
   const total = logs.reduce((s,l)=>s+(parseFloat(l.dist)||0),0);
-  const weekly = logs.filter(l=>l.week===1).reduce((s,l)=>s+(parseFloat(l.dist)||0),0);
+  const curWeek = getWeekForDate ? getWeekForDate(new Date()) : 1;
+  const weekly = logs.filter(l=>l.week===curWeek).reduce((s,l)=>s+(parseFloat(l.dist)||0),0);
   const totalMin = logs.reduce((s,l)=>s+(parseInt(l.time)||0),0);
   document.getElementById('s-weekly').textContent = weekly.toFixed(1);
   document.getElementById('s-sess').textContent = logs.length;
@@ -590,25 +606,58 @@ function updateStats(){
 
 // ═══════════ LOG ═══════════
 function toggleLog(){
-  document.getElementById('log-form').classList.toggle('open');
+  const form = document.getElementById('log-form');
+  form.classList.toggle('open');
+  if(form.classList.contains('open') && !document.getElementById('f-date').value){
+    document.getElementById('f-date').value = new Date().toISOString().split('T')[0];
+  }
 }
+function getWeekForDate(d){
+  const daysSince = Math.floor((d - START_DATE) / 86400000);
+  if(daysSince < 0) return 1;
+  if(daysSince < 4) return 1;
+  return Math.min(13, Math.floor((daysSince - 4) / 7) + 2);
+}
+
 async function saveLog(){
   const dist = document.getElementById('f-dist').value;
   if(!dist){alert('กรอก distance ก่อนนะครับ');return;}
+
+  const dateVal = document.getElementById('f-date').value || new Date().toISOString().split('T')[0];
+  const d = new Date(dateVal + 'T00:00:00');
+  const months = ['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
+  const dateStr = `${d.getDate()} ${months[d.getMonth()]}`;
+  const week = getWeekForDate(d);
+
+  const typeVal = document.getElementById('f-type').value;
+  const typeLabels = {easy:'Easy Run',tempo:'Tempo/Interval',long:'Long Run',trail:'Trail Run',strength:'Strength',back:'Back-to-Back',rest:'Rest/Recovery'};
+
   const entry = {
-    id:Date.now(), date:'23 เม.ย.', week:1,
-    title:document.getElementById('tc-title').textContent,
-    type:'easy', dist,
-    time:document.getElementById('f-time').value,
-    pace:document.getElementById('f-pace').value,
-    hr:document.getElementById('f-hr').value,
-    elev:document.getElementById('f-elev').value,
-    feel:document.getElementById('f-feel').value,
-    note:document.getElementById('f-note').value
+    id: Date.now(),
+    dateISO: dateVal,
+    date: dateStr,
+    week,
+    title: typeLabels[typeVal] || 'Training',
+    type: typeVal,
+    dist,
+    time: document.getElementById('f-time').value,
+    pace: document.getElementById('f-pace').value,
+    hr: document.getElementById('f-hr').value,
+    elev: document.getElementById('f-elev').value,
+    feel: document.getElementById('f-feel').value,
+    note: document.getElementById('f-note').value
   };
   await db.collection('logs').doc(String(entry.id)).set(entry);
-  logs.unshift(entry); updateStats();
+  logs.unshift(entry);
+  logs.sort((a,b) => (b.dateISO||'') > (a.dateISO||'') ? 1 : -1);
+  updateStats();
   document.getElementById('log-form').classList.remove('open');
+  document.getElementById('f-dist').value='';
+  document.getElementById('f-time').value='';
+  document.getElementById('f-pace').value='';
+  document.getElementById('f-hr').value='';
+  document.getElementById('f-elev').value='';
+  document.getElementById('f-note').value='';
   const btn = document.getElementById('log-btn');
   btn.textContent = '✓ บันทึกแล้ว'; btn.classList.add('logged');
   renderWeekGrid(); renderHist();
