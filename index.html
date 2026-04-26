@@ -545,7 +545,19 @@ async function loadLogs(){
     const snap = await db.collection('logs').orderBy('id','desc').get();
     logs = snap.docs.map(d => d.data());
     logs.sort((a,b) => (b.dateISO||'') > (a.dateISO||'') ? 1 : -1);
-  }catch(e){ logs = []; }
+    localStorage.setItem('nst42v2', JSON.stringify(logs));
+  }catch(e){
+    console.warn('Firestore:', e.message);
+    try{ logs = JSON.parse(localStorage.getItem('nst42v2')||'[]'); }catch(_){ logs=[]; }
+    if(e.code === 'permission-denied'){
+      document.body.insertAdjacentHTML('afterbegin',
+        `<div style="background:#c62828;color:white;padding:10px 20px;font-size:13px;text-align:center">
+          ⚠️ Firestore ถูกบล็อก — ไปแก้ Rules ใน Firebase Console ก่อนนะครับ
+          <a href="https://console.firebase.google.com/project/nst42-coach/firestore/rules"
+             target="_blank" style="color:#ffcdd2;margin-left:8px">แก้ Rules</a>
+        </div>`);
+    }
+  }
 }
 
 // ═══════════ COUNTDOWN ═══════════
@@ -647,20 +659,27 @@ async function saveLog(){
     feel: document.getElementById('f-feel').value,
     note: document.getElementById('f-note').value
   };
-  await db.collection('logs').doc(String(entry.id)).set(entry);
-  logs.unshift(entry);
-  logs.sort((a,b) => (b.dateISO||'') > (a.dateISO||'') ? 1 : -1);
-  updateStats();
-  document.getElementById('log-form').classList.remove('open');
-  document.getElementById('f-dist').value='';
-  document.getElementById('f-time').value='';
-  document.getElementById('f-pace').value='';
-  document.getElementById('f-hr').value='';
-  document.getElementById('f-elev').value='';
-  document.getElementById('f-note').value='';
   const btn = document.getElementById('log-btn');
-  btn.textContent = '✓ บันทึกแล้ว'; btn.classList.add('logged');
-  renderWeekGrid(); renderHist();
+  btn.textContent = '⏳ กำลังบันทึก...'; btn.disabled = true;
+  try{
+    await db.collection('logs').doc(String(entry.id)).set(entry);
+    logs.unshift(entry);
+    logs.sort((a,b) => (b.dateISO||'') > (a.dateISO||'') ? 1 : -1);
+    localStorage.setItem('nst42v2', JSON.stringify(logs));
+    updateStats();
+    document.getElementById('log-form').classList.remove('open');
+    ['f-dist','f-time','f-pace','f-hr','f-elev','f-note'].forEach(id => document.getElementById(id).value='');
+    btn.textContent = '✓ บันทึกแล้ว'; btn.classList.add('logged');
+    renderWeekGrid(); renderHist();
+  }catch(e){
+    console.error(e);
+    const msg = e.code === 'permission-denied'
+      ? 'Firestore ถูกบล็อก กรุณาแก้ Rules ใน Firebase Console ก่อนครับ'
+      : 'บันทึกไม่สำเร็จ: ' + e.message;
+    alert(msg);
+    btn.textContent = '+ บันทึกผลซ้อม';
+  }
+  btn.disabled = false;
 }
 
 // ═══════════ PLAN ═══════════
@@ -744,8 +763,11 @@ function renderHist(){
 }
 async function deleteLog(id){
   if(!confirm('ลบ session นี้?')) return;
-  await db.collection('logs').doc(String(id)).delete();
+  try{
+    await db.collection('logs').doc(String(id)).delete();
+  }catch(e){ console.warn('Firestore delete:', e.message); }
   logs = logs.filter(l=>l.id!==id);
+  localStorage.setItem('nst42v2', JSON.stringify(logs));
   updateStats(); renderHist(); renderWeekGrid();
 }
 
